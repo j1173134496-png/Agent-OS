@@ -1,0 +1,119 @@
+name: agentos
+
+services:
+  api:
+    # V0.3.1 release image is immutable. Rebuild with scripts/Build-AgentOS.ps1
+    # and update this digest only as part of a new release record.
+    # V0.3.0 rollback image: registry.librechat.ai/danny-avila/librechat@sha256:a950bb5fe847ae3b00797bf02d0b26bcd4c12f27240ebad6fa9eedafefc59d52
+    image: agentos/librechat@sha256:a59d8926a97a2d7387700c746d6b0ba8e88c352ecd47de0fe0bd7cc4b1ebdcf1
+    pull_policy: never
+    platform: linux/amd64
+    container_name: agentos-api
+    restart: unless-stopped
+    init: true
+    command: ["npm", "run", "backend"]
+    ports:
+      - "127.0.0.1:3080:3080"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - ../.env
+    environment:
+      HOST: 0.0.0.0
+      PORT: "3080"
+      MONGO_URI: mongodb://mongodb:27017/LibreChat
+      CONFIG_PATH: /app/librechat.yaml
+      CUSTOM_FOOTER: "立能派 Agent OS"
+      ENDPOINTS: "${ENDPOINTS:-custom}"
+      AGENTOS_IMAGE_MODEL: "${AGENTOS_IMAGE_MODEL:-gpt-image-2}"
+      AGENTOS_IMAGE_MODELS: "${AGENTOS_IMAGE_MODELS:-gpt-image-1.5,gpt-image-2}"
+    volumes:
+      - type: bind
+        source: ../.env
+        target: /app/.env
+        read_only: true
+      - type: bind
+        source: ./librechat.yaml
+        target: /app/librechat.yaml
+        read_only: true
+      - type: bind
+        source: ./images
+        target: /app/client/public/images
+      - type: bind
+        source: ./uploads
+        target: /app/uploads
+      - type: bind
+        source: ./logs
+        target: /app/logs
+      - type: bind
+        source: ./skill
+        target: /app/skill
+
+  mongodb:
+    image: mongo@sha256:972a9fa5d0f06418faa85d3f831ebba14e203a55dee5cd2dbcaf09490d2eff31
+    platform: linux/amd64
+    container_name: agentos-mongodb
+    restart: unless-stopped
+    command: ["mongod", "--bind_ip_all", "--noauth"]
+    volumes:
+      - type: bind
+        source: ./data/mongodb
+        target: /data/db
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --quiet --eval \"quit(db.adminCommand({ ping: 1 }).ok ? 0 : 1)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  meilisearch:
+    profiles: [supporting]
+    image: getmeili/meilisearch@sha256:f8d986130128f830e4439f31add56033d74a34bb8942b50b93ff9630289d761c
+    platform: linux/amd64
+    container_name: agentos-meilisearch
+    restart: unless-stopped
+    environment:
+      MEILI_HOST: http://0.0.0.0:7700
+      MEILI_NO_ANALYTICS: "true"
+      MEILI_MASTER_KEY: "${MEILI_MASTER_KEY}"
+    volumes:
+      - type: bind
+        source: ./data/meilisearch
+        target: /meili_data
+
+  vectordb:
+    profiles: [supporting]
+    image: pgvector/pgvector@sha256:7ed468f55926b0284a51848dcb2d7a4cc645581a508f6293956f1fca51bdeceb
+    platform: linux/amd64
+    container_name: agentos-vectordb
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${VECTORDB_DATABASE:-mydatabase}"
+      POSTGRES_USER: "${VECTORDB_USER:-myuser}"
+      POSTGRES_PASSWORD: "${VECTORDB_PASSWORD}"
+    volumes:
+      - type: bind
+        source: ./data/pgvector
+        target: /var/lib/postgresql/data
+
+  rag_api:
+    profiles: [supporting]
+    image: registry.librechat.ai/danny-avila/librechat-rag-api-dev-lite@sha256:d38e834a258de9dfb7ade585956a3211c0447ea1c6e205aac18edb3e55ce1a36
+    platform: linux/amd64
+    container_name: agentos-rag-api
+    restart: unless-stopped
+    environment:
+      DB_HOST: vectordb
+      DB_PORT: "5432"
+      DB_NAME: "${VECTORDB_DATABASE:-mydatabase}"
+      DB_USER: "${VECTORDB_USER:-myuser}"
+      DB_PASSWORD: "${VECTORDB_PASSWORD}"
+      RAG_PORT: "${RAG_PORT:-8000}"
+    depends_on:
+      vectordb:
+        condition: service_started
+    env_file:
+      - ../.env

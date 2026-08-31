@@ -1,0 +1,36 @@
+{
+  "schema_version": "agentos.plugin-catalog.v1",
+  "plugins": [
+    {
+      "id": "agentos-demo",
+      "version": "0.3.0",
+      "name": "AgentOS 能力演示",
+      "description": "调用无副作用的演示能力，返回 request_id、结构化结果和审计引用。",
+      "icon": "/assets/logo-mark.png",
+      "riskLevel": "read-only",
+      "skillIds": ["agentos-demo"],
+      "mcpServerIds": [],
+      "allowedTools": ["agentos_demo"],
+      "allowedRoles": ["user", "employee", "admin"],
+      "confirmationPolicy": "none",
+      "enabled": true
+    },
+    {
+      "id": "agentos-image",
+      "version": "0.3.0",
+      "name": "AI 生图",
+      "description": "启用图片生成与编辑；请使用 gpt-5.5 Agent，默认图片模型为 gpt-image-2。",
+      "icon": "/assets/logo-mark.png",
+      "riskLevel": "read-only",
+      "skillIds": ["agentos-image"],
+      "mcpServerIds": [],
+      "allowedTools": ["image_gen_oai", "image_edit_oai"],
+      "modelType": "image",
+      "models": ["gpt-image-2", "gpt-image-1.5"],
+      "defaultModel": "gpt-image-2",
+      "allowedRoles": ["user", "employee", "admin"],
+      "confirmationPolicy": "none",
+      "enabled": true
+    }
+  ]
+}

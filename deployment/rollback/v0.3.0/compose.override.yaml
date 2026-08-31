@@ -1,0 +1,30 @@
+services:
+  api:
+    image: registry.librechat.ai/danny-avila/librechat@sha256:a950bb5fe847ae3b00797bf02d0b26bcd4c12f27240ebad6fa9eedafefc59d52
+    pull_policy: never
+    entrypoint: ["/app/agentos-entrypoint.sh"]
+    volumes:
+      - type: bind
+        source: ./rollback/v0.3.0/agentos-entrypoint.sh
+        target: /app/agentos-entrypoint.sh
+        read_only: true
+      - type: bind
+        source: ./rollback/v0.3.0/agentos-runtime
+        target: /app/agentos/runtime
+        read_only: true
+      - type: bind
+        source: ./rollback/v0.3.0/plugins/catalog.json
+        target: /app/agentos/catalog.json
+        read_only: true
+      - type: bind
+        source: ./rollback/v0.3.0/branding/agentos-plugins.js
+        target: /app/client/dist/assets/agentos-plugins.js
+        read_only: true
+      - type: bind
+        source: ./rollback/v0.3.0/branding/agentos-theme.css
+        target: /app/client/dist/assets/agentos-theme.css
+        read_only: true
+      - type: bind
+        source: ./rollback/v0.3.0/branding/logo-mark.png
+        target: /app/client/dist/assets/logo-mark.png
+        read_only: true

@@ -1,0 +1,32 @@
+# Local secrets and operator configuration
+.env
+.env.*
+!.env.example
+
+# Runtime state and generated artifacts
+deployment/data/
+deployment/uploads/
+deployment/logs/
+deployment/images/
+deployment/runtime/
+deployment/librechat.yaml
+
+# Extracted upstream archive kept outside the maintained source tree
+source/extract-v0.8.7/
+source/librechat/
+source/librechat-v0.8.7.zip
+
+# Local audit output
+logs/
+
+# Local editor and OS files
+.idea/
+.vscode/
+*.user
+*.suo
+Thumbs.db
+Desktop.ini
+
+# Test and tool output
+coverage/
+*.log

@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentos.linenpai.local/schemas/plugin-manifest.schema.json",
+  "title": "AgentOS Plugin Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "version",
+    "name",
+    "description",
+    "icon",
+    "riskLevel",
+    "skillIds",
+    "mcpServerIds",
+    "allowedTools",
+    "allowedRoles",
+    "confirmationPolicy",
+    "enabled"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "minLength": 2,
+      "maxLength": 64
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 80
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 500
+    },
+    "icon": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "riskLevel": {
+      "type": "string",
+      "enum": [
+        "read-only",
+        "controlled-write-local",
+        "controlled-write-remote"
+      ]
+    },
+    "skillIds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true,
+      "maxItems": 32
+    },
+    "mcpServerIds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "uniqueItems": true,
+      "maxItems": 32
+    },
+    "allowedTools": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-zA-Z0-9_.-]+$"
+      },
+      "uniqueItems": true,
+      "maxItems": 64
+    },
+    "modelType": {
+      "type": "string",
+      "enum": ["text", "image", "other"]
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+      },
+      "uniqueItems": true,
+      "minItems": 1,
+      "maxItems": 32
+    },
+    "defaultModel": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"
+    },
+    "allowedRoles": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z0-9_-]+$"
+      },
+      "uniqueItems": true,
+      "minItems": 1,
+      "maxItems": 32
+    },
+    "confirmationPolicy": {
+      "type": "string",
+      "enum": ["none", "business-review", "explicit-user-confirmation"]
+    },
+    "enabled": {
+      "type": "boolean"
+    }
+  }
+}
