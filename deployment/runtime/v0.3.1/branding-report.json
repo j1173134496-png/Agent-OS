@@ -1,0 +1,72 @@
+{
+    "schema_version":  "agentos.v0.3.1.branding-report.v1",
+    "generated_at":  "2026-08-31T08:12:45.4120088Z",
+    "checks":  [
+                   {
+                       "name":  "source_theme_no_generation_substring_selector",
+                       "status":  "PASS",
+                       "detail":  "Generation filenames are not selected by a broad CSS substring rule."
+                   },
+                   {
+                       "name":  "source_theme_asset_boundary",
+                       "status":  "PASS",
+                       "detail":  "The image tool icon remains brandable only under /assets/. "
+                   },
+                   {
+                       "name":  "source_theme_no_global_alt_selector",
+                       "status":  "PASS",
+                       "detail":  "Global alt-text matching cannot rewrite message images."
+                   },
+                   {
+                       "name":  "rollback_theme_no_generation_substring_selector",
+                       "status":  "PASS",
+                       "detail":  "Generation filenames are not selected by a broad CSS substring rule."
+                   },
+                   {
+                       "name":  "rollback_theme_asset_boundary",
+                       "status":  "PASS",
+                       "detail":  "The image tool icon remains brandable only under /assets/. "
+                   },
+                   {
+                       "name":  "rollback_theme_no_global_alt_selector",
+                       "status":  "PASS",
+                       "detail":  "Global alt-text matching cannot rewrite message images."
+                   },
+                   {
+                       "name":  "rollback_script_asset_boundary",
+                       "status":  "PASS",
+                       "detail":  "Rollback branding script limits replacement to same-origin /assets/ icon files."
+                   },
+                   {
+                       "name":  "path__assets_openai_svg",
+                       "status":  "PASS",
+                       "detail":  "Expected True for /assets/openai.svg."
+                   },
+                   {
+                       "name":  "path__assets_image_gen_oai_png",
+                       "status":  "PASS",
+                       "detail":  "Expected True for /assets/image_gen_oai.png."
+                   },
+                   {
+                       "name":  "path__images_user_image_gen_oai-123_png",
+                       "status":  "PASS",
+                       "detail":  "Expected False for /images/user/image_gen_oai-123.png."
+                   },
+                   {
+                       "name":  "path__api_share_image_gen_oai_png",
+                       "status":  "PASS",
+                       "detail":  "Expected False for /api/share/image_gen_oai.png."
+                   },
+                   {
+                       "name":  "path_data_image_png;base64,abc",
+                       "status":  "PASS",
+                       "detail":  "Expected False for data:image/png;base64,abc."
+                   },
+                   {
+                       "name":  "path_blob_http___localhost_image_gen_oai",
+                       "status":  "PASS",
+                       "detail":  "Expected False for blob:http://localhost/image_gen_oai."
+                   }
+               ],
+    "gate":  "PASS"
+}

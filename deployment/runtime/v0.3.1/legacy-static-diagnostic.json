@@ -1,0 +1,67 @@
+{
+  "schema_version": "agentos.v0.3.static-report.v1",
+  "generated_at": "2026-08-28T02:30:25.5686103Z",
+  "checks": [
+    {
+      "name": "catalog_schema",
+      "status": "PASS",
+      "detail": "Catalog schema version is supported."
+    },
+    {
+      "name": "catalog_non_empty",
+      "status": "PASS",
+      "detail": "At least one plugin is registered."
+    },
+    {
+      "name": "catalog_unique_ids",
+      "status": "PASS",
+      "detail": "Plugin IDs are unique."
+    },
+    {
+      "name": "manifest_agentos-demo",
+      "status": "PASS",
+      "detail": "Manifest has required fields and only declared optional model metadata."
+    },
+    {
+      "name": "tools_agentos-demo",
+      "status": "PASS",
+      "detail": "Manifest tools are restricted to the AgentOS allowlist."
+    },
+    {
+      "name": "manifest_agentos-image",
+      "status": "PASS",
+      "detail": "Manifest has required fields and only declared optional model metadata."
+    },
+    {
+      "name": "tools_agentos-image",
+      "status": "PASS",
+      "detail": "Manifest tools are restricted to the AgentOS allowlist."
+    },
+    {
+      "name": "no_free_execution_entry",
+      "status": "PASS",
+      "detail": "AgentOS runtime has no shell, process, or arbitrary-path execution entry."
+    },
+    {
+      "name": "capability_gate_strips_client_tools",
+      "status": "PASS",
+      "detail": "Capability Gate replaces client tool input with server-side allowlisted tools."
+    },
+    {
+      "name": "frontend_selection_contract",
+      "status": "PASS",
+      "detail": "Frontend sends session selection and carries only the new-chat draft into its first real conversation."
+    },
+    {
+      "name": "frontend_route_isolation",
+      "status": "PASS",
+      "detail": "Normal route changes load stored selections instead of migrating the new-chat draft."
+    },
+    {
+      "name": "runtime_allowlist_probe",
+      "status": "FAIL",
+      "detail": "Container runtime probe failed: node:internal/modules/cjs/loader:1520\r\n  throw err;\r\n  ^\r\n\r\nError: Cannot find module '/app/agentos/runtime/catalog'\r\nRequire stack:\r\n- /app/[eval]\r\n    at Module.<anonymous> (node:internal/modules/cjs/loader:1517:15)\r\n    at Module._resolveFilename (/app/node_modules/module-alias/index.js:49:29)\r\n    at wrapResolveFilename (node:internal/modules/cjs/loader:1071:27)\r\n    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1095:10)\r\n    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1122:12)\r\n    at Module._load (node:internal/modules/cjs/loader:1294:5)\r\n    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)\r\n    at Module.require (node:internal/modules/cjs/loader:1617:12)\r\n    at require (node:internal/modules/helpers:153:16)\r\n    at [eval]:2:17 {\r\n  code: 'MODULE_NOT_FOUND',\r\n  requireStack: [ '/app/[eval]' ]\r\n}\r\n\r\nNode.js v24.18.0"
+    }
+  ],
+  "gate": "FAIL"
+}

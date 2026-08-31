@@ -1,0 +1,92 @@
+{
+    "schema_version":  "agentos.v0.3.1.config-report.v1",
+    "generated_at":  "2026-08-31T08:12:41.6886677Z",
+    "checks":  [
+                   {
+                       "name":  "approved_model_environment",
+                       "status":  "PASS",
+                       "detail":  "The private environment contains exactly the four approved V0.3.1 text model IDs."
+                   },
+                   {
+                       "name":  "default_text_model",
+                       "status":  "PASS",
+                       "detail":  "The default text model is gpt-5.5."
+                   },
+                   {
+                       "name":  "default_image_model",
+                       "status":  "PASS",
+                       "detail":  "The default image model is gpt-image-2."
+                   },
+                   {
+                       "name":  "config_exists",
+                       "status":  "PASS",
+                       "detail":  "The generated LibreChat configuration exists."
+                   },
+                   {
+                       "name":  "config_secret_placeholder",
+                       "status":  "PASS",
+                       "detail":  "The generated config retains a server-side API key placeholder."
+                   },
+                   {
+                       "name":  "model_specs_count",
+                       "status":  "PASS",
+                       "detail":  "The employee model catalog contains exactly four model specs."
+                   },
+                   {
+                       "name":  "model_labels",
+                       "status":  "PASS",
+                       "detail":  "All approved employee-facing labels are present."
+                   },
+                   {
+                       "name":  "no_agent_model_specs",
+                       "status":  "PASS",
+                       "detail":  "No Agent-suffixed model spec is exposed."
+                   },
+                   {
+                       "name":  "no_image_model_spec",
+                       "status":  "PASS",
+                       "detail":  "The image model is not exposed in the text model selector."
+                   },
+                   {
+                       "name":  "reasoning_enabled",
+                       "status":  "PASS",
+                       "detail":  "The reasoning matrix is verified and enabled in generated config."
+                   },
+                   {
+                       "name":  "reasoning_runtime_contract",
+                       "status":  "PASS",
+                       "detail":  "The server preserves the reasoning contract in interfaceConfig."
+                   },
+                   {
+                       "name":  "reasoning_gpt-5.6-sol",
+                       "status":  "PASS",
+                       "detail":  "The verified matrix exposes low/medium/high for gpt-5.6-sol."
+                   },
+                   {
+                       "name":  "reasoning_gpt-5.6-terra",
+                       "status":  "PASS",
+                       "detail":  "The verified matrix exposes low/medium/high for gpt-5.6-terra."
+                   },
+                   {
+                       "name":  "reasoning_gpt-5.6-luna",
+                       "status":  "PASS",
+                       "detail":  "The verified matrix exposes low/medium/high for gpt-5.6-luna."
+                   },
+                   {
+                       "name":  "reasoning_gpt-5.5",
+                       "status":  "PASS",
+                       "detail":  "The verified matrix exposes low/medium/high for gpt-5.5."
+                   },
+                   {
+                       "name":  "brand_footer",
+                       "status":  "PASS",
+                       "detail":  "Compose provides the AgentOS footer through LibreChat\u0027s effective CUSTOM_FOOTER contract."
+                   },
+                   {
+                       "name":  "brand_theme_color",
+                       "status":  "PASS",
+                       "detail":  "The source document uses the AgentOS theme color."
+                   }
+               ],
+    "gate":  "PASS"
+}

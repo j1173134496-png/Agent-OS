@@ -1,0 +1,12 @@
+{
+  "generated_at": "2026-08-28T02:45:06.5079057Z",
+  "mongo_dump_status": "PASS",
+  "mongo_archive": "deployment/runtime/v0.3.1/rollback-backup/mongodb-20260828T024506Z.archive",
+  "config_backup_status": "PASS",
+  "uploads_summary": {
+    "exists": true,
+    "file_count": 0,
+    "total_bytes": 0
+  },
+  "api_key_copied": false
+}

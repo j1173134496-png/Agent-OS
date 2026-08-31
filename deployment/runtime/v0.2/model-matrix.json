@@ -1,0 +1,62 @@
+{
+    "schema_version":  "agentos.v0.2.model-matrix.v1",
+    "generated_at":  "2026-08-31T06:10:53.4853130Z",
+    "protocol":  "chat_completions",
+    "default_text_model":  "gpt-5.5",
+    "text_models":  [
+                        "gpt-5.6-sol",
+                        "gpt-5.6-terra",
+                        "gpt-5.6-luna",
+                        "gpt-5.5"
+                    ],
+    "default_image_model":  "gpt-image-2",
+    "image_models":  [
+                         "gpt-image-1.5",
+                         "gpt-image-2"
+                     ],
+    "results":  [
+                    {
+                        "name":  "model_catalog",
+                        "model":  "",
+                        "status":  "PASS",
+                        "detail":  "available_models=13"
+                    },
+                    {
+                        "name":  "text_completion",
+                        "model":  "gpt-5.6-sol",
+                        "status":  "PASS",
+                        "detail":  "assistant_text_received=true"
+                    },
+                    {
+                        "name":  "text_completion",
+                        "model":  "gpt-5.6-terra",
+                        "status":  "PASS",
+                        "detail":  "assistant_text_received=true"
+                    },
+                    {
+                        "name":  "text_completion",
+                        "model":  "gpt-5.6-luna",
+                        "status":  "PASS",
+                        "detail":  "assistant_text_received=true"
+                    },
+                    {
+                        "name":  "text_completion",
+                        "model":  "gpt-5.5",
+                        "status":  "PASS",
+                        "detail":  "assistant_text_received=true"
+                    },
+                    {
+                        "name":  "image_generation",
+                        "model":  "gpt-image-1.5",
+                        "status":  "PASS",
+                        "detail":  "image_data=b64_json"
+                    },
+                    {
+                        "name":  "image_generation",
+                        "model":  "gpt-image-2",
+                        "status":  "PASS",
+                        "detail":  "image_data=b64_json"
+                    }
+                ],
+    "gate":  "PASS"
+}

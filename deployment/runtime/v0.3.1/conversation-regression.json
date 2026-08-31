@@ -1,0 +1,26 @@
+{
+  "schema_version": "agentos.v0.3.1.conversation-regression.v1",
+  "generated_at": "2026-08-28T02:13:24.159Z",
+  "test_surface": "authenticated_local_browser",
+  "model": "gpt-5.5",
+  "rounds": [
+    {
+      "round": 1,
+      "status": "PASS",
+      "streaming": true,
+      "response_marker": "REGRESSION_ONE_OK"
+    },
+    {
+      "round": 2,
+      "status": "PASS",
+      "streaming": true,
+      "response_marker": "REGRESSION_TWO_OK"
+    }
+  ],
+  "history_reload": {
+    "status": "PASS",
+    "both_responses_visible": true
+  },
+  "secrets_captured": false,
+  "gate": "PASS"
+}

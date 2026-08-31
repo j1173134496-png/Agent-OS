@@ -1,0 +1,216 @@
+{
+  "schema_version": "agentos.v0.3.1.rollback-report.v1",
+  "generated_at": "2026-08-28T02:45:28.7638879Z",
+  "active_image": "agentos/librechat@sha256:a59d8926a97a2d7387700c746d6b0ba8e88c352ecd47de0fe0bd7cc4b1ebdcf1",
+  "rollback_image": "registry.librechat.ai/danny-avila/librechat@sha256:a950bb5fe847ae3b00797bf02d0b26bcd4c12f27240ebad6fa9eedafefc59d52",
+  "switched_to_rollback": true,
+  "restored_active": true,
+  "before": {
+    "mongo": {
+      "assistants": 0,
+      "presets": 0,
+      "tokens": 0,
+      "conversationtags": 0,
+      "roles": 2,
+      "agents": 1,
+      "users": 3,
+      "projects": 0,
+      "systemgrants": 23,
+      "aclentries": 2,
+      "files": 6,
+      "accessroles": 17,
+      "messages": 30,
+      "agentapikeys": 0,
+      "agentos_audit_events": 5,
+      "auditlogs": 0,
+      "agentcategories": 7,
+      "pluginauths": 0,
+      "keys": 0,
+      "mcpservers": 0,
+      "skillsyncstatuses": 0,
+      "prompts": 0,
+      "agentos_conversation_plugins": 4,
+      "skillfiles": 0,
+      "transactions": 78,
+      "toolcalls": 0,
+      "banners": 0,
+      "sharedlinks": 0,
+      "skillsynccredentials": 0,
+      "skills": 0,
+      "balances": 0,
+      "groups": 0,
+      "promptgroups": 0,
+      "configs": 0,
+      "sessions": 14,
+      "memoryentries": 0,
+      "conversations": 10,
+      "chatprojects": 0,
+      "actions": 0
+    },
+    "uploads": {
+      "exists": true,
+      "file_count": 0,
+      "total_bytes": 0
+    }
+  },
+  "after": {
+    "mongo": {
+      "assistants": 0,
+      "presets": 0,
+      "tokens": 0,
+      "conversationtags": 0,
+      "roles": 2,
+      "agents": 1,
+      "users": 3,
+      "projects": 0,
+      "systemgrants": 23,
+      "aclentries": 2,
+      "files": 6,
+      "accessroles": 17,
+      "messages": 30,
+      "agentapikeys": 0,
+      "agentos_audit_events": 5,
+      "auditlogs": 0,
+      "agentcategories": 7,
+      "pluginauths": 0,
+      "keys": 0,
+      "mcpservers": 0,
+      "skillsyncstatuses": 0,
+      "prompts": 0,
+      "agentos_conversation_plugins": 4,
+      "skillfiles": 0,
+      "transactions": 78,
+      "toolcalls": 0,
+      "banners": 0,
+      "sharedlinks": 0,
+      "skillsynccredentials": 0,
+      "skills": 0,
+      "balances": 0,
+      "groups": 0,
+      "promptgroups": 0,
+      "configs": 0,
+      "sessions": 14,
+      "memoryentries": 0,
+      "conversations": 10,
+      "chatprojects": 0,
+      "actions": 0
+    },
+    "uploads": {
+      "exists": true,
+      "file_count": 0,
+      "total_bytes": 0
+    }
+  },
+  "backup_manifest": "deployment/runtime/v0.3.1/rollback-backup/backup-manifest.json",
+  "checks": [
+    {
+      "name": "rollback_image_available",
+      "status": "PASS",
+      "detail": "The V0.3.0 rollback image is available locally.",
+      "evidence": "docker image inspect"
+    },
+    {
+      "name": "rollback_bundle_exists",
+      "status": "PASS",
+      "detail": "The rollback Compose override exists.",
+      "evidence": "deployment/rollback/v0.3.0/compose.override.yaml"
+    },
+    {
+      "name": "rollback_bundle_complete",
+      "status": "PASS",
+      "detail": "The complete V0.3.0 overlay bundle is present before switch.",
+      "evidence": ""
+    },
+    {
+      "name": "active_digest_before",
+      "status": "PASS",
+      "detail": "The active Compose file points to the V0.3.1 digest before rehearsal.",
+      "evidence": "deployment/compose.yaml"
+    },
+    {
+      "name": "active_service_before",
+      "status": "PASS",
+      "detail": "The running API container starts on the V0.3.1 image.",
+      "evidence": "docker inspect agentos-api"
+    },
+    {
+      "name": "mongo_summary_before",
+      "status": "PASS",
+      "detail": "MongoDB collection counts were captured before rollback.",
+      "evidence": "mongosh collection count"
+    },
+    {
+      "name": "uploads_summary_before",
+      "status": "PASS",
+      "detail": "Upload storage summary was captured before rollback.",
+      "evidence": "deployment/uploads"
+    },
+    {
+      "name": "backup_created",
+      "status": "PASS",
+      "detail": "MongoDB, Compose, and LibreChat configuration backup artifacts were created without copying .env.",
+      "evidence": "deployment/runtime/v0.3.1/rollback-backup/backup-manifest.json"
+    },
+    {
+      "name": "rollback_switch",
+      "status": "PASS",
+      "detail": "The API service was recreated with the V0.3.0 rollback image.",
+      "evidence": "docker compose rollback override"
+    },
+    {
+      "name": "rollback_ready",
+      "status": "PASS",
+      "detail": "The V0.3.0 rollback service returned HTTP 200/OK on /readyz.",
+      "evidence": "http://localhost:3080/readyz"
+    },
+    {
+      "name": "rollback_container_image",
+      "status": "PASS",
+      "detail": "The running API container image matches the V0.3.0 rollback digest.",
+      "evidence": "docker inspect agentos-api"
+    },
+    {
+      "name": "rollback_overlay_loaded",
+      "status": "PASS",
+      "detail": "The running rollback container contains the full V0.3.0 runtime, catalog, and branding overlay.",
+      "evidence": "docker exec agentos-api file checks"
+    },
+    {
+      "name": "active_restore",
+      "status": "PASS",
+      "detail": "The API service was recreated with the V0.3.1 image.",
+      "evidence": "docker compose active configuration"
+    },
+    {
+      "name": "active_restore_ready",
+      "status": "PASS",
+      "detail": "The restored V0.3.1 service returned HTTP 200/OK on /readyz.",
+      "evidence": "http://localhost:3080/readyz"
+    },
+    {
+      "name": "active_container_image_after",
+      "status": "PASS",
+      "detail": "The running API container matches the pinned V0.3.1 image after restore.",
+      "evidence": "docker inspect agentos-api"
+    },
+    {
+      "name": "active_overlay_removed",
+      "status": "PASS",
+      "detail": "The V0.3.0 overlay mounts are absent after restoring V0.3.1.",
+      "evidence": "docker exec agentos-api path checks"
+    },
+    {
+      "name": "mongo_preserved",
+      "status": "PASS",
+      "detail": "MongoDB collection counts are unchanged after rollback and restore.",
+      "evidence": "mongosh collection count comparison"
+    },
+    {
+      "name": "uploads_preserved",
+      "status": "PASS",
+      "detail": "Upload file count and total bytes are unchanged after rollback and restore.",
+      "evidence": "deployment/uploads summary comparison"
+    }
+  ],
+  "gate": "PASS"
+}

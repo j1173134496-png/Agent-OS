@@ -1,0 +1,37 @@
+{
+    "schema_version":  "agentos.v0.3.1.source-test-report.v1",
+    "generated_at":  "2026-08-31T08:12:45.3894242Z",
+    "checks":  [
+                   {
+                       "name":  "source_tree",
+                       "status":  "PASS",
+                       "detail":  "The maintained LibreChat source tree exists.",
+                       "evidence":  "source/librechat-maintained"
+                   },
+                   {
+                       "name":  "jest_dependency",
+                       "status":  "PASS",
+                       "detail":  "Source test dependencies are installed.",
+                       "evidence":  "source/librechat-maintained/node_modules/.bin/jest"
+                   },
+                   {
+                       "name":  "reasoning_selector_tests",
+                       "status":  "PASS",
+                       "detail":  "Test Suites: 1 passed, 1 total Tests:       6 passed, 6 total Snapshots:   0 total Time:        1.081 s, estimated 2 s",
+                       "evidence":  "source/librechat-maintained/client/src/components/Chat/Menus/Endpoints/__tests__/agentosReasoning.test.ts"
+                   },
+                   {
+                       "name":  "request_contract_tests",
+                       "status":  "PASS",
+                       "detail":  "Test Suites: 1 passed, 1 total Tests:       2 passed, 2 total Snapshots:   0 total Time:        0.375 s, estimated 1 s",
+                       "evidence":  "source/librechat-maintained/packages/data-provider/specs/agentos-v031-contract.spec.ts"
+                   },
+                   {
+                       "name":  "image_tool_tests",
+                       "status":  "PASS",
+                       "detail":  "Test Suites: 1 passed, 1 total Tests:       4 passed, 4 total Snapshots:   0 total Time:        0.554 s, estimated 1 s",
+                       "evidence":  "source/librechat-maintained/api/test/app/clients/tools/structured/OpenAIImageTools.test.js"
+                   }
+               ],
+    "gate":  "PASS"
+}

@@ -1,0 +1,169 @@
+{
+  "schema_version": "agentos.v0.3.1.ui-evidence.v1",
+  "generated_at": "2026-08-28T02:11:54.740Z",
+  "url": "http://localhost:3080/",
+  "viewports": [
+    {
+      "floating_capability_count": 0,
+      "footer": true,
+      "horizontal_overflow": false,
+      "model_button": "GPT-5.5，推理强度中",
+      "theme_color": "#ff6a00",
+      "title": "立能派 Agent OS",
+      "vertical_overflow": false,
+      "viewport": "1440x900",
+      "model_labels": [
+        "GPT-5.6 Sol",
+        "GPT-5.6 Terra",
+        "GPT-5.6 Luna",
+        "GPT-5.5"
+      ],
+      "model_rects": [
+        {
+          "bottom": 47,
+          "right": 803
+        },
+        {
+          "bottom": 83,
+          "right": 803
+        },
+        {
+          "bottom": 119,
+          "right": 803
+        },
+        {
+          "bottom": 155,
+          "right": 803
+        }
+      ],
+      "reasoning_labels": [
+        "低",
+        "中",
+        "高"
+      ],
+      "reasoning_rects": [
+        {
+          "bottom": 53,
+          "right": 803
+        },
+        {
+          "bottom": 89,
+          "right": 803
+        },
+        {
+          "bottom": 125,
+          "right": 803
+        }
+      ],
+      "screenshot": "deployment/runtime/v0.3.1/screenshots/desktop-1440x900.png"
+    },
+    {
+      "floating_capability_count": 0,
+      "footer": true,
+      "horizontal_overflow": false,
+      "model_button": "GPT-5.5，推理强度中",
+      "theme_color": "#ff6a00",
+      "title": "立能派 Agent OS",
+      "vertical_overflow": false,
+      "viewport": "1920x1080",
+      "model_labels": [
+        "GPT-5.6 Sol",
+        "GPT-5.6 Terra",
+        "GPT-5.6 Luna",
+        "GPT-5.5"
+      ],
+      "model_rects": [
+        {
+          "bottom": 47,
+          "right": 803
+        },
+        {
+          "bottom": 83,
+          "right": 803
+        },
+        {
+          "bottom": 119,
+          "right": 803
+        },
+        {
+          "bottom": 155,
+          "right": 803
+        }
+      ],
+      "reasoning_labels": [
+        "低",
+        "中",
+        "高"
+      ],
+      "reasoning_rects": [
+        {
+          "bottom": 53,
+          "right": 803
+        },
+        {
+          "bottom": 89,
+          "right": 803
+        },
+        {
+          "bottom": 125,
+          "right": 803
+        }
+      ],
+      "screenshot": "deployment/runtime/v0.3.1/screenshots/desktop-1920x1080.png"
+    },
+    {
+      "floating_capability_count": 0,
+      "footer": true,
+      "horizontal_overflow": false,
+      "model_button": "GPT-5.5，推理强度中",
+      "theme_color": "#ff6a00",
+      "title": "立能派 Agent OS",
+      "vertical_overflow": false,
+      "viewport": "390x844",
+      "model_labels": [
+        "GPT-5.6 Sol",
+        "GPT-5.6 Terra",
+        "GPT-5.6 Luna",
+        "GPT-5.5"
+      ],
+      "model_rects": [
+        {
+          "bottom": 47,
+          "right": 317
+        },
+        {
+          "bottom": 83,
+          "right": 317
+        },
+        {
+          "bottom": 119,
+          "right": 317
+        },
+        {
+          "bottom": 155,
+          "right": 317
+        }
+      ],
+      "reasoning_labels": [
+        "低",
+        "中",
+        "高"
+      ],
+      "reasoning_rects": [
+        {
+          "bottom": 53,
+          "right": 317
+        },
+        {
+          "bottom": 89,
+          "right": 317
+        },
+        {
+          "bottom": 125,
+          "right": 317
+        }
+      ],
+      "screenshot": "deployment/runtime/v0.3.1/screenshots/mobile-390x844.png"
+    }
+  ]
+}

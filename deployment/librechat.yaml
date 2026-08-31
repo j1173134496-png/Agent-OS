@@ -1,0 +1,113 @@
+version: 1.3.13
+cache: true
+interface:
+  customWelcome: "\u6B22\u8FCE\u4F7F\u7528 \u7ACB\u80FD\u6D3E Agent OS\u3002\u8BF7\u9009\u62E9\u5DF2\u914D\u7F6E\u7684\u516C\u53F8\u6A21\u578B\u5F00\u59CB\u5BF9\u8BDD\u3002"
+  modelSelect: true
+  parameters: false
+  presets: false
+  agents: true
+  mcpServers: {}
+  prompts: false
+  defaultPinnedTools:
+    - image_gen_oai
+  agentosReasoning:
+    enabled: true
+    default: medium
+    levels:
+      - low
+      - medium
+      - high
+    models:
+      gpt-5.6-sol:
+        levels:
+          - low
+          - medium
+          - high
+      gpt-5.6-terra:
+        levels:
+          - low
+          - medium
+          - high
+      gpt-5.6-luna:
+        levels:
+          - low
+          - medium
+          - high
+      gpt-5.5:
+        levels:
+          - low
+          - medium
+          - high
+endpoints:
+  custom:
+    - name: 立能派中转
+      apiKey: '${AGENTOS_LLM_API_KEY}'
+      baseURL: '${AGENTOS_LLM_BASE_URL}/v1'
+      models:
+        default:
+          - "gpt-5.6-sol"
+          - "gpt-5.6-terra"
+          - "gpt-5.6-luna"
+          - "gpt-5.5"
+        fetch: false
+      iconURL: /assets/logo-mark.png
+      modelDisplayLabel: 立能派中转
+      titleConvo: false
+      customParams:
+        defaultParamsEndpoint: openAI
+  agents:
+    allowedProviders:
+      - "立能派中转"
+    capabilities:
+      - tools
+      - skills
+      - web_search
+      - file_search
+      - execute_code
+      - actions
+modelSpecs:
+  prioritize: true
+  enforce: true
+  addedEndpoints:
+    - agents
+  list:
+    - name: agentos-gpt-5-6-sol
+      label: "GPT-5.6 Sol"
+      default: false
+      showOnLanding: true
+      description: "\u4F01\u4E1A\u6587\u672C\u6A21\u578B"
+      iconURL: /assets/logo-mark.png
+      preset:
+        endpoint: 立能派中转
+        model: "gpt-5.6-sol"
+        stream: true
+    - name: agentos-gpt-5-6-terra
+      label: "GPT-5.6 Terra"
+      default: false
+      showOnLanding: true
+      description: "\u4F01\u4E1A\u6587\u672C\u6A21\u578B"
+      iconURL: /assets/logo-mark.png
+      preset:
+        endpoint: 立能派中转
+        model: "gpt-5.6-terra"
+        stream: true
+    - name: agentos-gpt-5-6-luna
+      label: "GPT-5.6 Luna"
+      default: false
+      showOnLanding: true
+      description: "\u4F01\u4E1A\u6587\u672C\u6A21\u578B"
+      iconURL: /assets/logo-mark.png
+      preset:
+        endpoint: 立能派中转
+        model: "gpt-5.6-luna"
+        stream: true
+    - name: agentos-gpt-5-5
+      label: "GPT-5.5"
+      default: true
+      showOnLanding: true
+      description: "\u4F01\u4E1A\u6587\u672C\u6A21\u578B"
+      iconURL: /assets/logo-mark.png
+      preset:
+        endpoint: 立能派中转
+        model: "gpt-5.5"
+        stream: true
