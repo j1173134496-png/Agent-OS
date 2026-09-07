@@ -1,0 +1,28 @@
+{
+  "schema_version": "agentos.native-tool-registry.v1",
+  "mcp_servers": {
+    "submit-flow": {
+      "config_key": "submit-flow",
+      "native_suffix": "mcp_submit-flow",
+      "contract_tool_prefix": "submit_flow."
+    }
+  },
+  "native_tools": [
+    "create_task_mcp_submit-flow",
+    "attach_file_mcp_submit-flow",
+    "run_task_mcp_submit-flow",
+    "get_task_mcp_submit-flow",
+    "get_review_mcp_submit-flow",
+    "confirm_task_mcp_submit-flow",
+    "list_outputs_mcp_submit-flow"
+  ],
+  "contract_tools": [
+    "submit_flow.create_task",
+    "submit_flow.attach_file",
+    "submit_flow.run_task",
+    "submit_flow.get_task",
+    "submit_flow.get_review",
+    "submit_flow.confirm_task",
+    "submit_flow.list_outputs"
+  ]
+}

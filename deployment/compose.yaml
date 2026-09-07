@@ -2,12 +2,12 @@ name: agentos
 
 services:
   api:
-    # V0.3.1 release image is immutable. Rebuild with scripts/Build-AgentOS.ps1
+    # V0.3.2 architecture release image is immutable. Rebuild with scripts/Build-AgentOS.ps1
     # and update this digest only as part of a new release record.
     # V0.3.0 rollback image: registry.librechat.ai/danny-avila/librechat@sha256:a950bb5fe847ae3b00797bf02d0b26bcd4c12f27240ebad6fa9eedafefc59d52
-    image: agentos/librechat@sha256:a59d8926a97a2d7387700c746d6b0ba8e88c352ecd47de0fe0bd7cc4b1ebdcf1
-    pull_policy: never
-    platform: linux/amd64
+    image: ${AGENTOS_API_IMAGE:-agentos/librechat@sha256:4bb71758b0ae058b4a542d822d7bceb31f0a51fcc4c7ff36cd6e72f4bb98bf74}
+    pull_policy: ${AGENTOS_API_PULL_POLICY:-never}
+    platform: ${AGENTOS_API_PLATFORM:-linux/amd64}
     container_name: agentos-api
     restart: unless-stopped
     init: true
@@ -27,9 +27,12 @@ services:
       MONGO_URI: mongodb://mongodb:27017/LibreChat
       CONFIG_PATH: /app/librechat.yaml
       CUSTOM_FOOTER: "立能派 Agent OS"
-      ENDPOINTS: "${ENDPOINTS:-custom}"
+      ENDPOINTS: "${ENDPOINTS:-custom,agents}"
       AGENTOS_IMAGE_MODEL: "${AGENTOS_IMAGE_MODEL:-gpt-image-2}"
       AGENTOS_IMAGE_MODELS: "${AGENTOS_IMAGE_MODELS:-gpt-image-1.5,gpt-image-2}"
+      # A published Agent that depends on Submit must not become ready with a
+      # zero-tool runtime after an MCP startup failure.
+      MCP_REQUIRED_TOOLS: "${MCP_REQUIRED_TOOLS:-submit-flow=7}"
     volumes:
       - type: bind
         source: ../.env
@@ -53,8 +56,8 @@ services:
         target: /app/skill
 
   mongodb:
-    image: mongo@sha256:972a9fa5d0f06418faa85d3f831ebba14e203a55dee5cd2dbcaf09490d2eff31
-    platform: linux/amd64
+    image: ${AGENTOS_MONGO_IMAGE:-mongo@sha256:972a9fa5d0f06418faa85d3f831ebba14e203a55dee5cd2dbcaf09490d2eff31}
+    platform: ${AGENTOS_MONGO_PLATFORM:-linux/amd64}
     container_name: agentos-mongodb
     restart: unless-stopped
     command: ["mongod", "--bind_ip_all", "--noauth"]

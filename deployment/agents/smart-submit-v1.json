@@ -1,0 +1,48 @@
+{
+  "schema_version": "agentos.agent-release.v1",
+  "agent_id": "smart-submit-v1",
+  "business_version": "1.0.0",
+  "display_name": "智能填报助手",
+  "category": "业务运营",
+  "publisher": "立能派",
+  "description": "收集月度填报文件，运行受控的确定性填报流程，完成必要复核并返回结果文件。",
+  "publication_status": "published",
+  "instructions": "你是立能派的智能填报助手。只通过已授权的 Submit Flow MCP 工具处理月度填报任务。先确认站点和报送月份，再按技能说明收集附件、查询结构化状态并推进任务。遇到 need_review 时必须展示复核字段和证据并等待用户确认，不能自行确认。只能依据 get_task 和 list_outputs 的结构化结果报告状态和产物。不得索取或使用本地路径、URL、Shell、Python、SQL 或任意自由命令。",
+  "employee_access": {
+    "allowed_roles": ["employee", "admin"],
+    "permissions": ["view", "use", "favorite"],
+    "denied_permissions": ["create", "edit", "share", "publish", "configure"]
+  },
+  "runtime": {
+    "provider": "立能派中转",
+    "model": "gpt-5.5",
+    "reasoning": "medium",
+    "skills_enabled": true,
+    "mcp_server_ids": ["submit-flow"],
+    "skill_ids": ["submit-flow-skill"],
+    "tool_ids": [
+      "submit_flow.create_task",
+      "submit_flow.attach_file",
+      "submit_flow.run_task",
+      "submit_flow.get_task",
+      "submit_flow.get_review",
+      "submit_flow.confirm_task",
+      "submit_flow.list_outputs"
+    ],
+    "allow_model_override": false,
+    "allow_reasoning_override": false,
+    "allow_tool_override": false
+  },
+  "risk_policy": {
+    "requires_human_confirmation": ["submit_flow.confirm_task"],
+    "forbidden_inputs": ["local_path", "url", "shell", "python", "sql", "free_command"],
+    "completion_source": "submit_task_json_and_audit"
+  },
+  "release_record": {
+    "release_id": "agentos-v0.3.2-smart-submit-v1",
+    "published_at": "2026-09-02",
+    "owner": "jiangzongyuan",
+    "acceptance_contract": "K:/Workers/Submit_Flow_Agent/spec/contracts/submit_mcp_contract.md",
+    "verification_task": "K:/Workers/Submit_Flow_Agent/spec/tasks/MVP-024_SUBMIT_HTTP_MCP_ADAPTER.md"
+  }
+}

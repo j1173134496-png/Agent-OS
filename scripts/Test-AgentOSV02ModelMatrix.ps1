@@ -2,7 +2,9 @@
 param(
     [string]$EnvPath,
     [string]$ReportPath,
-    [int]$TimeoutSec = 120
+    [int]$TimeoutSec = 120,
+    [ValidateRange(1, 5)][int]$RetryCount = 3,
+    [ValidateRange(0, 10)][int]$RetryDelaySec = 2
 )
 
 $ErrorActionPreference = 'Stop'
@@ -63,45 +65,51 @@ function Invoke-RelayJson {
         [AllowNull()][object]$Body
     )
 
-    try {
-        $params = @{
-            Method = $Method
-            Uri = "$($baseUrl.TrimEnd('/'))/$($Path.TrimStart('/'))"
-            Headers = @{ Authorization = "Bearer $apiKey" }
-            UseBasicParsing = $true
-            TimeoutSec = $TimeoutSec
-        }
-        if ($null -ne $Body) {
-            $params.ContentType = 'application/json'
-            $params.Body = $Body | ConvertTo-Json -Depth 30 -Compress
-        }
-        $response = Invoke-WebRequest @params
-        $parsed = $response.Content | ConvertFrom-Json
-        return [pscustomobject]@{ ok = $true; status = [int]$response.StatusCode; body = $parsed; detail = '' }
-    } catch {
-        $status = 0
-        $responseText = ''
-        if ($_.Exception.Response) { $status = [int]$_.Exception.Response.StatusCode }
-        if ($_.Exception.Response) {
+        for ($attempt = 1; $attempt -le $RetryCount; $attempt++) {
             try {
-                $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
-                $responseText = $reader.ReadToEnd()
-                $reader.Dispose()
+                $params = @{
+                    Method = $Method
+                    Uri = "$($baseUrl.TrimEnd('/'))/$($Path.TrimStart('/'))"
+                    Headers = @{ Authorization = "Bearer $apiKey" }
+                    UseBasicParsing = $true
+                    TimeoutSec = $TimeoutSec
+                }
+                if ($null -ne $Body) {
+                    $params.ContentType = 'application/json'
+                    $params.Body = $Body | ConvertTo-Json -Depth 30 -Compress
+                }
+                $response = Invoke-WebRequest @params
+                $parsed = $response.Content | ConvertFrom-Json
+                return [pscustomobject]@{ ok = $true; status = [int]$response.StatusCode; body = $parsed; detail = '' }
             } catch {
+                $status = 0
                 $responseText = ''
+                if ($_.Exception.Response) { $status = [int]$_.Exception.Response.StatusCode }
+                if ($_.Exception.Response) {
+                    try {
+                        $reader = New-Object System.IO.StreamReader($_.Exception.Response.GetResponseStream())
+                        $responseText = $reader.ReadToEnd()
+                        $reader.Dispose()
+                    } catch {
+                        $responseText = ''
+                    }
+                }
+                $detail = (Sanitize-Text $_.Exception.Message)
+                if ($responseText) {
+                    try {
+                        $errorPayload = $responseText | ConvertFrom-Json
+                        if ($errorPayload.error.message) { $detail = Sanitize-Text $errorPayload.error.message }
+                    } catch {
+                        $detail = Sanitize-Text $responseText
+                    }
+                }
+                if ($status -in @(429, 502, 503, 504) -and $attempt -lt $RetryCount) {
+                    if ($RetryDelaySec -gt 0) { Start-Sleep -Seconds $RetryDelaySec }
+                    continue
+                }
+                return [pscustomobject]@{ ok = $false; status = $status; body = $null; detail = $detail }
             }
         }
-        $detail = (Sanitize-Text $_.Exception.Message)
-        if ($responseText) {
-            try {
-                $errorPayload = $responseText | ConvertFrom-Json
-                if ($errorPayload.error.message) { $detail = Sanitize-Text $errorPayload.error.message }
-            } catch {
-                $detail = Sanitize-Text $responseText
-            }
-        }
-        return [pscustomobject]@{ ok = $false; status = $status; body = $null; detail = $detail }
-    }
 }
 
 function Add-Result {
@@ -128,6 +136,11 @@ $report = [ordered]@{
     text_models = @($textModels)
     default_image_model = $defaultImageModel
     image_models = @($imageModels)
+    retry_policy = [ordered]@{
+        retry_statuses = @(429, 502, 503, 504)
+        max_attempts = $RetryCount
+        delay_seconds = $RetryDelaySec
+    }
     results = $results
     gate = 'BLOCKED'
 }
@@ -180,8 +193,19 @@ if (-not $configurationReady) {
         }
         $response = Invoke-RelayJson -Method POST -Path 'v1/images/generations' -Body $body
         if (-not $response.ok) {
-            $status = if ($response.status -eq 403 -and $response.detail -match 'Image generation is not enabled') { 'BLOCKED' } else { 'FAIL' }
-            Add-Result -Name 'image_generation' -Model $imageModel -Status $status -Detail $response.detail
+            # The relay currently exposes this policy failure as HTTP 403. Keep it
+            # separate from a broken request so the release evidence names the
+            # external group permission that must be changed.
+            if ($response.status -eq 403) {
+                $permissionDetail = if ($response.detail -match '(?i)image generation.*not enabled|not enabled.*image|image.*permission') {
+                    $response.detail
+                } else {
+                    'The image generation endpoint returned HTTP 403; verify the API key group image permission and endpoint authorization.'
+                }
+                Add-Result -Name 'image_generation' -Model $imageModel -Status 'BLOCKED' -Detail $permissionDetail
+            } else {
+                Add-Result -Name 'image_generation' -Model $imageModel -Status 'FAIL' -Detail $response.detail
+            }
         } elseif (@($response.body.data).Count -eq 0) {
             Add-Result -Name 'image_generation' -Model $imageModel -Status 'FAIL' -Detail 'The relay returned no image data.'
         } elseif ([string]::IsNullOrWhiteSpace([string]$response.body.data[0].b64_json) -and

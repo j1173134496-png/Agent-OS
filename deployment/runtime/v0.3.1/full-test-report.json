@@ -1,32 +1,32 @@
 {
-    "schema_version":  "agentos.v0.3.1.full-test-report.v1",
-    "generated_at":  "2026-08-31T08:04:18.7962521Z",
-    "source_path":  "source/librechat-maintained",
-    "checks":  [
-                   {
-                       "name":  "source_tree",
-                       "status":  "PASS",
-                       "exit_code":  0,
-                       "detail":  "The maintained LibreChat source tree exists."
-                   },
-                   {
-                       "name":  "mongo_memory_runtime",
-                       "status":  "PASS",
-                       "exit_code":  0,
-                       "detail":  "mongodb_memory_server_ready"
-                   },
-                   {
-                       "name":  "unit_test_suite",
-                       "status":  "PASS",
-                       "exit_code":  0,
-                       "detail":  "PASS src/components/Agents/tests/AgentDetail.spec.tsx (26.821 s, 272 MB heap size)       at commitPassiveMountOnFiber (../node_modules/react-dom/cjs/react-dom.development.js:24930:9)       at commitPassiveMountEffects_complete (../node_modules/react-dom/cjs/react-dom.development.js:24917:7)       at commitPassiveMountEffects_begin (../node_modules/react-dom/cjs/react-dom.development.js:24905:3)       at commitPassiveMountEffects (../node_modules/react-dom/cjs/react-dom.development.js:27078:3)       at flushPassiveEffectsImpl (../node_modules/react-dom/cjs/react-dom.development.js:27023:14)       at flushPassiveEffects (../node_modules/react-dom/cjs/react-dom.development.js:26115:3)       at commitPassiveMountOnFiber (../node_modules/react-dom/cjs/react-dom.development.js:24930:9)       at "
-                   },
-                   {
-                       "name":  "mock_e2e_suite",
-                       "status":  "PASS",
-                       "exit_code":  0,
-                       "detail":  "ℹ [ESM] 6 files, total: 1.33 MB ℹ [CJS] 6 files, total: 1.40 MB ℹ [CJS] 3 files, total: 171.24 kB ℹ [CJS] 4 files, total: 1.72 MB ℹ [ESM] 7 files, total: 1.88 MB ℹ 6 files, total: 5.81 MB ℹ 3 files, total: 653.77 kB ℹ [CJS] 2 files, total: 108.91 kB ℹ [CJS] 3 files, total: 823.38 kB ℹ [ESM] 5 files, total: 882.63 kB \u001b[2m[WebServer] \u001b[22m2026-08-31 15:59:28 \u001b[31merror\u001b[39m: \u001b[31m[MCPServersRegistry] Failed to inspect server \"e2e-http\": Domain \"http://127.0.0.1:8765\" is not allowed\u001b[39m \u001b[2m[WebServer] \u001b[22m2026-08-31 15:59:28 \u001b[31merror\u001b[39m: \u001b[31m[MCP][e2e-http] Failed to initialize: Domain \"http://127.0.0.1:8765\" is not allowed\u001b[39m \u001b[2m[WebServer] \u001b[22m2026-08-31 15:59:29 \u001b[32minfo\u001b[39m: \u001b[32mServer readiness checks passing.\u001b[39m \u001b[2m[WebServer] \u001b[22m2026-08-31 16:00:42 \u001b[32minfo\u001b[39m: \u001b"
-                   }
-               ],
-    "gate":  "PASS"
+  "schema_version": "agentos.v0.3.1.full-test-report.v1",
+  "generated_at": "2026-09-02T00:40:41.2849087Z",
+  "source_path": "source/librechat-maintained",
+  "checks": [
+    {
+      "name": "source_tree",
+      "status": "PASS",
+      "exit_code": 0,
+      "detail": "The maintained LibreChat source tree exists."
+    },
+    {
+      "name": "mongo_memory_runtime",
+      "status": "PASS",
+      "exit_code": 0,
+      "detail": "mongodb_memory_server_ready"
+    },
+    {
+      "name": "unit_test_suite",
+      "status": "PASS",
+      "exit_code": 0,
+      "detail": "client=PASS; api=PASS; packages/api=PASS; packages/data-provider=PASS; packages/data-schemas=PASS"
+    },
+    {
+      "name": "mock_e2e_suite",
+      "status": "PASS",
+      "exit_code": 0,
+      "detail": "ℹ [ESM] 6 files, total: 1.33 MB ℹ [CJS] 6 files, total: 1.40 MB ℹ [CJS] 4 files, total: 1.72 MB ℹ [CJS] 3 files, total: 171.24 kB ℹ [ESM] 7 files, total: 1.88 MB ℹ 6 files, total: 5.81 MB ℹ 3 files, total: 653.87 kB ℹ [CJS] 3 files, total: 823.38 kB ℹ [ESM] 5 files, total: 882.63 kB ℹ [CJS] 2 files, total: 108.91 kB \u001b[2m[WebServer] \u001b[22m2026-09-02 08:36:15 \u001b[31merror\u001b[39m: \u001b[31m[MCPServersRegistry] Failed to inspect server \"e2e-http\": Domain \"http://127.0.0.1:8765\" is not allowed\u001b[39m \u001b[2m[WebServer] \u001b[22m2026-09-02 08:36:15 \u001b[31merror\u001b[39m: \u001b[31m[MCP][e2e-http] Failed to initialize: Domain \"http://127.0.0.1:8765\" is not allowed\u001b[39m \u001b[2m[WebServer] \u001b[22m2026-09-02 08:36:16 \u001b[32minfo\u001b[39m: \u001b[32mServer readiness checks passing.\u001b[39m \u001b[2m[WebServer] \u001b[22m2026-09-02 08:37:29 \u001b[32minfo\u001b[39m: \u001b"
+    }
+  ],
+  "gate": "PASS"
 }

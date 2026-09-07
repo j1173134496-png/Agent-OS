@@ -82,6 +82,12 @@ $model = Get-Value -Values $values -Name 'AGENTOS_LLM_MODEL' -Default 'gpt-5.5'
 $configuredModels = Get-ModelList -Values $values -Name 'AGENTOS_LLM_MODELS' -Fallback $model
 $imageDefaultModel = Get-Value -Values $values -Name 'AGENTOS_IMAGE_MODEL' -Default 'gpt-image-2'
 $imageModels = Get-ModelList -Values $values -Name 'AGENTOS_IMAGE_MODELS' -Fallback $imageDefaultModel
+$submitMcpUrl = Get-Value -Values $values -Name 'SUBMIT_MCP_URL' -Default 'http://host.docker.internal:8121/mcp'
+$submitMcpToken = Get-Value -Values $values -Name 'SUBMIT_MCP_TOKEN'
+$submitTenantId = Get-Value -Values $values -Name 'SUBMIT_TENANT_ID' -Default 'lnp-default'
+$submitAgentId = Get-Value -Values $values -Name 'SUBMIT_AGENT_ID' -Default 'smart-submit-v1'
+$submitAgentVersion = Get-Value -Values $values -Name 'SUBMIT_AGENT_VERSION' -Default '1.0.0'
+$submitAllowedAddress = Get-Value -Values $values -Name 'SUBMIT_MCP_ALLOWED_ADDRESS' -Default 'host.docker.internal:8121'
 
 # This is the V0.3.1 employee-facing product whitelist. Runtime/provider details stay server-side.
 $approvedTextModels = @('gpt-5.6-sol', 'gpt-5.6-terra', 'gpt-5.6-luna', 'gpt-5.5')
@@ -107,6 +113,8 @@ if ((Test-Present $imageDefaultModel) -and ($imageModels -notcontains $imageDefa
 }
 
 $configured = (Test-Present $baseUrl) -and (Test-Present $apiKey)
+$submitConfigured = (Test-Present $submitMcpUrl) -and (Test-Present $submitMcpToken) -and
+    (Test-Present $submitTenantId) -and (Test-Present $submitAgentId) -and (Test-Present $submitAgentVersion)
 $brandName = (-join ([char[]](0x7ACB, 0x80FD, 0x6D3E))) + ' Agent OS'
 $relayName = (-join ([char[]](0x7ACB, 0x80FD, 0x6D3E, 0x4E2D, 0x8F6C)))
 $baseUrlSuffix = if ($baseUrl.TrimEnd('/') -match '/v1$') { '' } else { '/v1' }
@@ -137,8 +145,21 @@ $lines.Add('  customWelcome: "\u6B22\u8FCE\u4F7F\u7528 \u7ACB\u80FD\u6D3E Agent 
 $lines.Add('  modelSelect: true')
 $lines.Add('  parameters: false')
 $lines.Add('  presets: false')
-$lines.Add('  agents: true')
-$lines.Add('  mcpServers: {}')
+$lines.Add('  agents:')
+$lines.Add('    use: true')
+$lines.Add('    share: false')
+$lines.Add('    public: false')
+$lines.Add('  marketplace:')
+$lines.Add('    use: true')
+$lines.Add('  mcpServers:')
+$lines.Add('    use: true')
+$lines.Add('    create: false')
+$lines.Add('    share: false')
+$lines.Add('    public: false')
+$lines.Add('  skills:')
+$lines.Add('    use: true')
+$lines.Add('    share: false')
+$lines.Add('    public: false')
 $lines.Add('  prompts: false')
 $lines.Add('  defaultPinnedTools:')
 $lines.Add('    - image_gen_oai')
@@ -178,6 +199,36 @@ if ($configured) {
     }
 } else {
     $lines.Add('  custom: []')
+}
+
+if ($submitConfigured) {
+    $lines.Add('mcpSettings:')
+    $lines.Add('  allowedAddresses:')
+    $lines.Add("    - $(ConvertTo-YamlString $submitAllowedAddress)")
+    $lines.Add('mcpServers:')
+    $lines.Add('  submit-flow:')
+    $lines.Add('    type: streamable-http')
+    $lines.Add("    url: $(ConvertTo-YamlString $submitMcpUrl)")
+    $lines.Add('    title: Submit Flow')
+    $lines.Add('    description: "Controlled Submit Flow task service for files, execution, review, and authorized artifacts."')
+    $lines.Add('    startup: true')
+    $lines.Add('    chatMenu: false')
+    $lines.Add('    serverInstructions: true')
+    $lines.Add('    timeout: 1800000')
+    $lines.Add('    initTimeout: 30000')
+    $lines.Add('    headers:')
+    # Keep the private service token out of the generated, versioned YAML. LibreChat
+    # resolves this environment placeholder when it initializes the MCP request.
+    $lines.Add('      Authorization: "Bearer ${SUBMIT_MCP_TOKEN}"')
+    $lines.Add("      X-AgentOS-Tenant-Id: $(ConvertTo-YamlString $submitTenantId)")
+    $lines.Add("      X-AgentOS-Agent-Id: $(ConvertTo-YamlString $submitAgentId)")
+    $lines.Add("      X-AgentOS-Agent-Version: $(ConvertTo-YamlString $submitAgentVersion)")
+    $lines.Add('      X-LibreChat-User-Id: "{{LIBRECHAT_USER_ID}}"')
+    $lines.Add('      X-LibreChat-User-Role: "{{LIBRECHAT_USER_ROLE}}"')
+    $lines.Add('      X-LibreChat-User-Email: "{{LIBRECHAT_USER_EMAIL}}"')
+    $lines.Add('      X-AgentOS-Conversation-Id: "{{LIBRECHAT_BODY_CONVERSATIONID}}"')
+} else {
+    $lines.Add('mcpServers: {}')
 }
 
 $lines.Add('modelSpecs:')

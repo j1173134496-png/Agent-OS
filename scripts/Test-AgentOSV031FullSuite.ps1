@@ -29,11 +29,35 @@ function Get-SafeSummary {
     return $summary
 }
 
+function Invoke-JestWorkspace {
+    param(
+        [Parameter(Mandatory = $true)][string]$WorkspacePath,
+        [Parameter(Mandatory = $true)][string]$WorkspaceName
+    )
+
+    $oldLocation = Get-Location
+    try {
+        Push-Location -LiteralPath $WorkspacePath
+        $output = @(& npm run test:ci -- --maxWorkers=2 --workerIdleMemoryLimit=512MB 2>&1)
+        $exitCode = $LASTEXITCODE
+    } finally {
+        Pop-Location
+    }
+    return [pscustomobject]@{
+        workspace = $WorkspaceName
+        output = $output
+        exit_code = $exitCode
+        status = if ($exitCode -eq 0) { 'PASS' } else { 'FAIL' }
+        detail = Get-SafeSummary -Output $output -ExitCode $exitCode
+    }
+}
+
 function Invoke-NpmCheck {
     param(
         [Parameter(Mandatory = $true)][string]$Name,
         [Parameter(Mandatory = $true)][string]$ScriptName,
-        [hashtable]$Environment = @{}
+        [hashtable]$Environment = @{},
+        [switch]$SerialJest
     )
 
     $previousErrorAction = $ErrorActionPreference
@@ -45,8 +69,30 @@ function Invoke-NpmCheck {
     try {
         $ErrorActionPreference = 'Continue'
         try {
-            $output = @(& npm --prefix $SourcePath run $ScriptName 2>&1)
-            $exitCode = $LASTEXITCODE
+            if ($SerialJest) {
+                $workspaces = @(
+                    @{ name = 'client'; path = Join-Path $SourcePath 'client' },
+                    @{ name = 'api'; path = Join-Path $SourcePath 'api' },
+                    @{ name = 'packages/api'; path = Join-Path $SourcePath 'packages\api' },
+                    @{ name = 'packages/data-provider'; path = Join-Path $SourcePath 'packages\data-provider' },
+                    @{ name = 'packages/data-schemas'; path = Join-Path $SourcePath 'packages\data-schemas' }
+                )
+                $output = @()
+                $exitCode = 0
+                $workspaceResults = @()
+                foreach ($workspace in $workspaces) {
+                    $workspaceResult = Invoke-JestWorkspace -WorkspacePath $workspace.path -WorkspaceName $workspace.name
+                    $workspaceResults += $workspaceResult
+                    $output += @($workspaceResult.output)
+                    if ($workspaceResult.exit_code -ne 0) {
+                        $exitCode = $workspaceResult.exit_code
+                        break
+                    }
+                }
+            } else {
+                $output = @(& npm --prefix $SourcePath run $ScriptName 2>&1)
+                $exitCode = $LASTEXITCODE
+            }
         } finally {
             $ErrorActionPreference = $previousErrorAction
         }
@@ -55,11 +101,21 @@ function Invoke-NpmCheck {
             [Environment]::SetEnvironmentVariable($key, $previousEnvironment[$key], 'Process')
         }
     }
+    $detail = Get-SafeSummary -Output $output -ExitCode $exitCode
+    if ($SerialJest -and $workspaceResults.Count -gt 0) {
+        $workspaceSummary = ($workspaceResults | ForEach-Object { "$($_.workspace)=$($_.status)" }) -join '; '
+        $failedWorkspace = $workspaceResults | Where-Object { $_.status -eq 'FAIL' } | Select-Object -First 1
+        if ($null -ne $failedWorkspace) {
+            $detail = "$workspaceSummary; $($failedWorkspace.workspace): $($failedWorkspace.detail)"
+        } else {
+            $detail = $workspaceSummary
+        }
+    }
     [ordered]@{
         name = $Name
         status = if ($exitCode -eq 0) { 'PASS' } else { 'FAIL' }
         exit_code = $exitCode
-        detail = Get-SafeSummary -Output $output -ExitCode $exitCode
+        detail = $detail
     }
 }
 
@@ -201,7 +257,7 @@ if ($sourceExists) {
                 detail = 'Skipped by -SkipUnit.'
             })
     } else {
-        $checks.Add((Invoke-NpmCheck -Name 'unit_test_suite' -ScriptName 'test:all' -Environment $mongoTestEnvironment))
+        $checks.Add((Invoke-NpmCheck -Name 'unit_test_suite' -ScriptName 'test:all' -Environment $mongoTestEnvironment -SerialJest))
     }
     if ($RunE2E) {
         $checks.Add((Invoke-IsolatedE2E))

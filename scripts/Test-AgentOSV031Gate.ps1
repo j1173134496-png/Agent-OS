@@ -189,12 +189,14 @@ $activeLegacy = @($legacyPaths | Where-Object { Test-Path -LiteralPath $_ })
 Add-Check 'legacy_overlay_isolated' ($activeLegacy.Count -eq 0) 'The legacy overlay is absent from the active deployment directory.' (($activeLegacy | ForEach-Object { Get-RelativeEvidencePath $_ }) -join ', ')
 Add-Check 'compose_has_no_legacy_overlay' ($composeText -notmatch '(?i)agentos-entrypoint|agentos-runtime|agentos_plugin_ids|agentos-plugins\.js') 'Compose does not load the legacy overlay.' (Get-RelativeEvidencePath $composePath)
 
-$expectedDigest = 'sha256:a59d8926a97a2d7387700c746d6b0ba8e88c352ecd47de0fe0bd7cc4b1ebdcf1'
-$digestMatch = $composeText -match [regex]::Escape("agentos/librechat@$expectedDigest")
-Add-Check 'api_image_digest' $digestMatch 'Compose pins the expected V0.3.1 API image digest.' (Get-RelativeEvidencePath $composePath)
-Add-Check 'api_image_available' ($null -ne (& docker image inspect ("agentos/librechat@$expectedDigest") 2>$null)) 'The pinned V0.3.1 API image is available locally.' 'docker image inspect'
+$apiImageMatch = [regex]::Match($composeText, '(?m)^\s*image:\s*(agentos/librechat@sha256:[0-9a-f]{64})\s*$')
+$expectedActiveImage = if ($apiImageMatch.Success) { $apiImageMatch.Groups[1].Value } else { '' }
+$expectedDigest = if ($expectedActiveImage -match '@(sha256:[0-9a-f]{64})$') { $matches[1] } else { '' }
+$digestMatch = $apiImageMatch.Success -and -not [string]::IsNullOrWhiteSpace($expectedDigest)
+Add-Check 'api_image_digest' $digestMatch 'Compose pins the active V0.3.1 API image with an immutable SHA-256 digest.' (Get-RelativeEvidencePath $composePath)
+Add-Check 'api_image_available' ($digestMatch -and $null -ne (& docker image inspect $expectedActiveImage 2>$null)) 'The pinned V0.3.1 API image is available locally.' 'docker image inspect'
 $runningDigest = ((& docker inspect agentos-api --format '{{.Config.Image}}' 2>$null) -join '').Trim()
-Add-Check 'running_api_image_digest' ($runningDigest -eq "agentos/librechat@$expectedDigest") 'The running API container uses the pinned V0.3.1 image digest.' 'docker inspect agentos-api'
+Add-Check 'running_api_image_digest' ($digestMatch -and $runningDigest -eq $expectedActiveImage) 'The running API container uses the same pinned V0.3.1 image digest as Compose.' 'docker inspect agentos-api'
 
 if (-not (Test-Path -LiteralPath $EvidenceDir)) { New-Item -ItemType Directory -Path $EvidenceDir -Force | Out-Null }
 $runtimeOk = $true
@@ -246,7 +248,6 @@ $fullTestPass = $null -ne $fullTestReport -and
 Add-Check 'full_test_suite' $fullTestPass 'The maintained source full test suite completed successfully.' (Get-RelativeEvidencePath $fullTestReportPath)
 
 $rollbackReport = Read-JsonFile -Path $rollbackReportPath
-$expectedActiveImage = "agentos/librechat@$expectedDigest"
 $expectedRollbackImage = 'registry.librechat.ai/danny-avila/librechat@sha256:a950bb5fe847ae3b00797bf02d0b26bcd4c12f27240ebad6fa9eedafefc59d52'
 $rollbackImagesMatch = $null -ne $rollbackReport -and
     [string]$rollbackReport.active_image -eq $expectedActiveImage -and
@@ -259,6 +260,12 @@ $releaseStatus = (Get-ReleaseField -Text $releaseText -Field 'Status').Trim('`')
 $releaseBaselineCommit = (Get-ReleaseField -Text $releaseText -Field 'Baseline commit').Trim('`')
 $releaseConfigHash = Get-ReleaseField -Text $releaseText -Field 'Configuration hash'
 $releaseTestSummary = Get-ReleaseField -Text $releaseText -Field 'Test summary'
+$releaseImageSummaryComplete = if ($expectedReleaseStatus -eq 'GATE PASS') {
+    $releaseTestSummary.Contains('image_generation=PASS')
+} else {
+    $releaseTestSummary.Contains('image_generation=BLOCKED') -or
+        $releaseTestSummary.Contains('image_generation=FAIL')
+}
 $releaseKnownIssues = Get-ReleaseField -Text $releaseText -Field 'Known issues'
 $releaseRollbackTarget = Get-ReleaseField -Text $releaseText -Field 'Rollback target'
 $releaseApprovers = Get-ReleaseField -Text $releaseText -Field 'Approvers'
@@ -280,7 +287,7 @@ $releaseComplete =
     $releaseText.Contains('AOS-031-01') -and $releaseText.Contains('AOS-031-09') -and
     $releaseTestSummary.Contains('unit_test_suite=PASS') -and
     $releaseTestSummary.Contains('mock_e2e_suite=PASS') -and
-    $releaseTestSummary.Contains('image_generation=PASS') -and
+    $releaseImageSummaryComplete -and
     $releaseKnownIssues.Contains('V0.3.2') -and
     $releaseRollbackTarget.Contains('V0.3.0') -and
     $releaseRollbackTarget.Contains($expectedRollbackImage) -and

@@ -7,10 +7,10 @@
 | 项目 | 当前值 |
 |---|---|
 | 文档基线 | V0.0.0 |
-| 软件版本 | V0.3.0 插件框架本地实现完成，图片能力待中转分组授权 |
-| 当前阶段 | V0.3.0 本地 Gate 验收与图片权限跟进 |
+| 软件版本 | V0.3.2 原生能力架构实现；运行闭环与 V0.3.3 验收持续推进 |
+| 当前阶段 | Windows → Mac mini M2 可移植 Git 交付与原生能力运行验收 |
 | 员工端首选底座 | LibreChat V0.8.7 稳定版，实施时锁定 Tag、Commit 与镜像 Digest |
-| 首期运行形态 | Windows 本机 + Docker Desktop + Web 浏览器 |
+| 首期运行形态 | Windows / macOS Apple Silicon + Docker Desktop + Web 浏览器 |
 | V1.0.0 目标 | 公司内网 Web 正式版 |
 | 首批业务能力 | Submit Flow 完整闭环、EMS 只读 Preview |
 | 当前写入授权 | 仅 AgentOS 本机部署配置；未授权业务代码改动或 EMS 写入 |
@@ -37,6 +37,23 @@
    - V0.3.0 交付范围、Gate 证据、外部阻塞和下一步输入。
 10. [V0.3.1-V0.4.0 原生能力体系重构实施任务书](docs/07_V0.3.1_TO_V0.4.0_NATIVE_CAPABILITY_REFACTOR_TASKBOOK.md)
    - 模型与推理选择、原生 Skills/Tools/智能体市场、图片能力、Submit/EMS 归属、迁移任务、测试 Gate 和回滚要求。
+11. [V0.3.2 运行闭环与 V0.3.3 验收任务书](docs/08_V0.3.2_RUNTIME_CLOSURE_AND_V0.3.3_ACCEPTANCE_TASKBOOK.md)
+   - 原生 Marketplace/Agent/Skill/MCP 的运行闭环、安全门禁、测试和发布要求。
+12. [Windows → Mac mini M2 Git 迁移交付书](docs/09_WINDOWS_TO_MAC_M2_GIT_MIGRATION.md)
+   - 仓库边界、系统配置重建、M2 初始化、验证、回滚和 Submit 独立交接要求。
+
+## Mac mini M2 快速入口
+
+本仓库只迁移系统配置，不携带用户、会话、Session、上传文件、生成图片或原始 MongoDB 数据。首次在 Mac 上运行：
+
+```bash
+pwsh -NoProfile -File ./scripts/New-AgentOSEnv.ps1
+# 编辑 .env 中的公司 LLM 与 Submit 私密参数后：
+chmod +x ./scripts/macos/*.sh
+./scripts/macos/bootstrap-agentos.sh
+```
+
+注册首位管理员后执行 `./scripts/macos/apply-system-config.sh`，系统将从 Git 中的声明式清单恢复角色权限、Skills 和智能体市场内容。完整说明见迁移交付书。
 
 ## V0.2.0 当前状态
 

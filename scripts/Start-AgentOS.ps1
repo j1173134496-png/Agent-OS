@@ -16,4 +16,7 @@ $composeArgs = @('--project-name', 'agentos', '--env-file', $envPath, '-f', $com
 & docker compose @composeArgs up -d --force-recreate
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+& (Join-Path $PSScriptRoot 'Sync-AgentOSAgents.ps1')
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
 Write-Host 'AgentOS V0.3.1 services are starting. Run .\scripts\Health-AgentOS.ps1 when ready.'

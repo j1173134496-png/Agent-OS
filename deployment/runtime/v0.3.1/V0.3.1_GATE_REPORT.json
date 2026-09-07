@@ -1,171 +1,171 @@
 {
-    "schema_version":  "agentos.v0.3.1.gate-report.v1",
-    "generated_at":  "2026-08-31T08:12:47.9420324Z",
-    "release":  "V0.3.1",
-    "base_url":  "http://localhost:3080",
-    "checks":  [
-                   {
-                       "name":  "config_contract",
-                       "status":  "PASS",
-                       "detail":  "The V0.3.1 configuration contract passes.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\config-report.json"
-                   },
-                   {
-                       "name":  "source_tests",
-                       "status":  "PASS",
-                       "detail":  "The V0.3.1 targeted source tests pass.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\source-test-report.json"
-                   },
-                   {
-                       "name":  "branding_regression",
-                       "status":  "PASS",
-                       "detail":  "Branding replacement is limited to /assets/ and cannot rewrite generated message images.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\branding-report.json"
-                   },
-                   {
-                       "name":  "image_generation_matrix",
-                       "status":  "PASS",
-                       "detail":  "The configured image models passed the live relay generation matrix.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.2\\model-matrix.json"
-                   },
-                   {
-                       "name":  "reasoning_preferred_protocol",
-                       "status":  "PASS",
-                       "detail":  "The configured protocol chat_completions passed protocol, reasoning, and streaming probes.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\reasoning-matrix.json"
-                   },
-                   {
-                       "name":  "reasoning_matrix_gpt-5.6-sol",
-                       "status":  "PASS",
-                       "detail":  "The reasoning matrix covers low/medium/high for gpt-5.6-sol.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\reasoning-matrix.json"
-                   },
-                   {
-                       "name":  "reasoning_matrix_gpt-5.6-terra",
-                       "status":  "PASS",
-                       "detail":  "The reasoning matrix covers low/medium/high for gpt-5.6-terra.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\reasoning-matrix.json"
-                   },
-                   {
-                       "name":  "reasoning_matrix_gpt-5.6-luna",
-                       "status":  "PASS",
-                       "detail":  "The reasoning matrix covers low/medium/high for gpt-5.6-luna.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\reasoning-matrix.json"
-                   },
-                   {
-                       "name":  "reasoning_matrix_gpt-5.5",
-                       "status":  "PASS",
-                       "detail":  "The reasoning matrix covers low/medium/high for gpt-5.5.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\reasoning-matrix.json"
-                   },
-                   {
-                       "name":  "reasoning_streaming",
-                       "status":  "PASS",
-                       "detail":  "The selected protocol has a streaming response probe.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\reasoning-matrix.json"
-                   },
-                   {
-                       "name":  "legacy_overlay_isolated",
-                       "status":  "PASS",
-                       "detail":  "The legacy overlay is absent from the active deployment directory.",
-                       "evidence":  ""
-                   },
-                   {
-                       "name":  "compose_has_no_legacy_overlay",
-                       "status":  "PASS",
-                       "detail":  "Compose does not load the legacy overlay.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\compose.yaml"
-                   },
-                   {
-                       "name":  "api_image_digest",
-                       "status":  "PASS",
-                       "detail":  "Compose pins the expected V0.3.1 API image digest.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\compose.yaml"
-                   },
-                   {
-                       "name":  "api_image_available",
-                       "status":  "PASS",
-                       "detail":  "The pinned V0.3.1 API image is available locally.",
-                       "evidence":  "docker image inspect"
-                   },
-                   {
-                       "name":  "running_api_image_digest",
-                       "status":  "PASS",
-                       "detail":  "The running API container uses the pinned V0.3.1 image digest.",
-                       "evidence":  "docker inspect agentos-api"
-                   },
-                   {
-                       "name":  "runtime_ready",
-                       "status":  "PASS",
-                       "detail":  "The local service readiness endpoint returns HTTP 200 and OK.",
-                       "evidence":  "http://localhost:3080/readyz"
-                   },
-                   {
-                       "name":  "home_brand_title",
-                       "status":  "PASS",
-                       "detail":  "The served page has the AgentOS title.",
-                       "evidence":  "http://localhost:3080/"
-                   },
-                   {
-                       "name":  "home_theme_color",
-                       "status":  "PASS",
-                       "detail":  "The served page has the AgentOS theme color.",
-                       "evidence":  "http://localhost:3080/"
-                   },
-                   {
-                       "name":  "compose_footer_contract",
-                       "status":  "PASS",
-                       "detail":  "Compose supplies the AgentOS footer contract.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\compose.yaml"
-                   },
-                   {
-                       "name":  "ui_evidence_file",
-                       "status":  "PASS",
-                       "detail":  "Browser evidence has the expected schema.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\ui-evidence.json"
-                   },
-                   {
-                       "name":  "ui_1440x900",
-                       "status":  "PASS",
-                       "detail":  "Browser evidence passes the 1440x900 visual and selector checks.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\ui-evidence.json"
-                   },
-                   {
-                       "name":  "ui_1920x1080",
-                       "status":  "PASS",
-                       "detail":  "Browser evidence passes the 1920x1080 visual and selector checks.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\ui-evidence.json"
-                   },
-                   {
-                       "name":  "ui_390x844",
-                       "status":  "PASS",
-                       "detail":  "Browser evidence passes the 390x844 visual and selector checks.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\ui-evidence.json"
-                   },
-                   {
-                       "name":  "conversation_regression",
-                       "status":  "PASS",
-                       "detail":  "Login, ordinary conversation, streaming, and history evidence is present.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\conversation-regression.json"
-                   },
-                   {
-                       "name":  "full_test_suite",
-                       "status":  "PASS",
-                       "detail":  "The maintained source full test suite completed successfully.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\full-test-report.json"
-                   },
-                   {
-                       "name":  "rollback_rehearsal",
-                       "status":  "PASS",
-                       "detail":  "The V0.3.0 rollback switch and V0.3.1 restore rehearsal passed.",
-                       "evidence":  "K:\\Workers\\AgentOS\\deployment\\runtime\\v0.3.1\\rollback-report.json"
-                   },
-                   {
-                       "name":  "release_record",
-                       "status":  "PASS",
-                       "detail":  "The V0.3.1 release record matches the expected GATE PASS result and current evidence.",
-                       "evidence":  "K:\\Workers\\AgentOS\\docs\\releases\\V0.3.1_RELEASE_RECORD.md"
-                   }
-               ],
-    "gate":  "PASS"
+  "schema_version": "agentos.v0.3.1.gate-report.v1",
+  "generated_at": "2026-09-02T01:24:22.5139951Z",
+  "release": "V0.3.1",
+  "base_url": "http://localhost:3080",
+  "checks": [
+    {
+      "name": "config_contract",
+      "status": "PASS",
+      "detail": "The V0.3.1 configuration contract passes.",
+      "evidence": "deployment/runtime/v0.3.1/config-report.json"
+    },
+    {
+      "name": "source_tests",
+      "status": "PASS",
+      "detail": "The V0.3.1 targeted source tests pass.",
+      "evidence": "deployment/runtime/v0.3.1/source-test-report.json"
+    },
+    {
+      "name": "branding_regression",
+      "status": "PASS",
+      "detail": "Branding replacement is limited to /assets/ and cannot rewrite generated message images.",
+      "evidence": "deployment/runtime/v0.3.1/branding-report.json"
+    },
+    {
+      "name": "image_generation_matrix",
+      "status": "FAIL",
+      "detail": "The configured image models passed the live relay generation matrix.",
+      "evidence": "deployment/runtime/v0.2/model-matrix.json"
+    },
+    {
+      "name": "reasoning_preferred_protocol",
+      "status": "PASS",
+      "detail": "The configured protocol chat_completions passed protocol, reasoning, and streaming probes.",
+      "evidence": "deployment/runtime/v0.3.1/reasoning-matrix.json"
+    },
+    {
+      "name": "reasoning_matrix_gpt-5.6-sol",
+      "status": "PASS",
+      "detail": "The reasoning matrix covers low/medium/high for gpt-5.6-sol.",
+      "evidence": "deployment/runtime/v0.3.1/reasoning-matrix.json"
+    },
+    {
+      "name": "reasoning_matrix_gpt-5.6-terra",
+      "status": "PASS",
+      "detail": "The reasoning matrix covers low/medium/high for gpt-5.6-terra.",
+      "evidence": "deployment/runtime/v0.3.1/reasoning-matrix.json"
+    },
+    {
+      "name": "reasoning_matrix_gpt-5.6-luna",
+      "status": "PASS",
+      "detail": "The reasoning matrix covers low/medium/high for gpt-5.6-luna.",
+      "evidence": "deployment/runtime/v0.3.1/reasoning-matrix.json"
+    },
+    {
+      "name": "reasoning_matrix_gpt-5.5",
+      "status": "PASS",
+      "detail": "The reasoning matrix covers low/medium/high for gpt-5.5.",
+      "evidence": "deployment/runtime/v0.3.1/reasoning-matrix.json"
+    },
+    {
+      "name": "reasoning_streaming",
+      "status": "PASS",
+      "detail": "The selected protocol has a streaming response probe.",
+      "evidence": "deployment/runtime/v0.3.1/reasoning-matrix.json"
+    },
+    {
+      "name": "legacy_overlay_isolated",
+      "status": "PASS",
+      "detail": "The legacy overlay is absent from the active deployment directory.",
+      "evidence": ""
+    },
+    {
+      "name": "compose_has_no_legacy_overlay",
+      "status": "PASS",
+      "detail": "Compose does not load the legacy overlay.",
+      "evidence": "deployment/compose.yaml"
+    },
+    {
+      "name": "api_image_digest",
+      "status": "PASS",
+      "detail": "Compose pins the active V0.3.1 API image with an immutable SHA-256 digest.",
+      "evidence": "deployment/compose.yaml"
+    },
+    {
+      "name": "api_image_available",
+      "status": "PASS",
+      "detail": "The pinned V0.3.1 API image is available locally.",
+      "evidence": "docker image inspect"
+    },
+    {
+      "name": "running_api_image_digest",
+      "status": "PASS",
+      "detail": "The running API container uses the same pinned V0.3.1 image digest as Compose.",
+      "evidence": "docker inspect agentos-api"
+    },
+    {
+      "name": "runtime_ready",
+      "status": "PASS",
+      "detail": "The local service readiness endpoint returns HTTP 200 and OK.",
+      "evidence": "http://localhost:3080/readyz"
+    },
+    {
+      "name": "home_brand_title",
+      "status": "PASS",
+      "detail": "The served page has the AgentOS title.",
+      "evidence": "http://localhost:3080/"
+    },
+    {
+      "name": "home_theme_color",
+      "status": "PASS",
+      "detail": "The served page has the AgentOS theme color.",
+      "evidence": "http://localhost:3080/"
+    },
+    {
+      "name": "compose_footer_contract",
+      "status": "PASS",
+      "detail": "Compose supplies the AgentOS footer contract.",
+      "evidence": "deployment/compose.yaml"
+    },
+    {
+      "name": "ui_evidence_file",
+      "status": "PASS",
+      "detail": "Browser evidence has the expected schema.",
+      "evidence": "deployment/runtime/v0.3.1/ui-evidence.json"
+    },
+    {
+      "name": "ui_1440x900",
+      "status": "PASS",
+      "detail": "Browser evidence passes the 1440x900 visual and selector checks.",
+      "evidence": "deployment/runtime/v0.3.1/ui-evidence.json"
+    },
+    {
+      "name": "ui_1920x1080",
+      "status": "PASS",
+      "detail": "Browser evidence passes the 1920x1080 visual and selector checks.",
+      "evidence": "deployment/runtime/v0.3.1/ui-evidence.json"
+    },
+    {
+      "name": "ui_390x844",
+      "status": "PASS",
+      "detail": "Browser evidence passes the 390x844 visual and selector checks.",
+      "evidence": "deployment/runtime/v0.3.1/ui-evidence.json"
+    },
+    {
+      "name": "conversation_regression",
+      "status": "PASS",
+      "detail": "Login, ordinary conversation, streaming, and history evidence is present.",
+      "evidence": "deployment/runtime/v0.3.1/conversation-regression.json"
+    },
+    {
+      "name": "full_test_suite",
+      "status": "PASS",
+      "detail": "The maintained source full test suite completed successfully.",
+      "evidence": "deployment/runtime/v0.3.1/full-test-report.json"
+    },
+    {
+      "name": "rollback_rehearsal",
+      "status": "PASS",
+      "detail": "The V0.3.0 rollback switch and V0.3.1 restore rehearsal passed.",
+      "evidence": "deployment/runtime/v0.3.1/rollback-report.json"
+    },
+    {
+      "name": "release_record",
+      "status": "PASS",
+      "detail": "The V0.3.1 release record matches the expected GATE FAIL result and current evidence.",
+      "evidence": "docs/releases/V0.3.1_RELEASE_RECORD.md"
+    }
+  ],
+  "gate": "FAIL"
 }

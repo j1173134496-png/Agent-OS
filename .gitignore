@@ -30,3 +30,8 @@ Desktop.ini
 # Test and tool output
 coverage/
 *.log
+junit.xml
+.DS_Store
+
+# Local migration/validation output is never part of a release snapshot.
+.migration/

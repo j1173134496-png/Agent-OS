@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-08-28T02:45:06.5079057Z",
+  "generated_at": "2026-09-02T00:40:50.9071620Z",
   "mongo_dump_status": "PASS",
-  "mongo_archive": "deployment/runtime/v0.3.1/rollback-backup/mongodb-20260828T024506Z.archive",
+  "mongo_archive": "deployment/runtime/v0.3.1/rollback-backup/mongodb-20260902T004050Z.archive",
   "config_backup_status": "PASS",
   "uploads_summary": {
     "exists": true,

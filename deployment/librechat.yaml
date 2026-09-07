@@ -5,8 +5,21 @@ interface:
   modelSelect: true
   parameters: false
   presets: false
-  agents: true
-  mcpServers: {}
+  agents:
+    use: true
+    share: false
+    public: false
+  marketplace:
+    use: true
+  mcpServers:
+    use: true
+    create: false
+    share: false
+    public: false
+  skills:
+    use: true
+    share: false
+    public: false
   prompts: false
   defaultPinnedTools:
     - image_gen_oai
@@ -65,6 +78,29 @@ endpoints:
       - file_search
       - execute_code
       - actions
+mcpSettings:
+  allowedAddresses:
+    - "host.docker.internal:8121"
+mcpServers:
+  submit-flow:
+    type: streamable-http
+    url: "http://host.docker.internal:8121/mcp"
+    title: Submit Flow
+    description: "Controlled Submit Flow task service for files, execution, review, and authorized artifacts."
+    startup: true
+    chatMenu: false
+    serverInstructions: true
+    timeout: 1800000
+    initTimeout: 30000
+    headers:
+      Authorization: "Bearer ${SUBMIT_MCP_TOKEN}"
+      X-AgentOS-Tenant-Id: "lnp-default"
+      X-AgentOS-Agent-Id: "smart-submit-v1"
+      X-AgentOS-Agent-Version: "1.0.0"
+      X-LibreChat-User-Id: "{{LIBRECHAT_USER_ID}}"
+      X-LibreChat-User-Role: "{{LIBRECHAT_USER_ROLE}}"
+      X-LibreChat-User-Email: "{{LIBRECHAT_USER_EMAIL}}"
+      X-AgentOS-Conversation-Id: "{{LIBRECHAT_BODY_CONVERSATIONID}}"
 modelSpecs:
   prioritize: true
   enforce: true

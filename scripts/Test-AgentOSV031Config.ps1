@@ -55,6 +55,10 @@ Add-Check 'default_text_model' ([string]$envValues['AGENTOS_LLM_MODEL'] -eq 'gpt
 Add-Check 'default_image_model' ([string]$envValues['AGENTOS_IMAGE_MODEL'] -eq 'gpt-image-2') 'The default image model is gpt-image-2.'
 Add-Check 'config_exists' (Test-Path -LiteralPath $configPath) 'The generated LibreChat configuration exists.'
 Add-Check 'config_secret_placeholder' ($configText.Contains('${AGENTOS_LLM_API_KEY}') -and $configText -notmatch [regex]::Escape([string]$envValues['AGENTOS_LLM_API_KEY'])) 'The generated config retains a server-side API key placeholder.'
+$submitToken = [string]$envValues['SUBMIT_MCP_TOKEN']
+$submitTokenSafe = [string]::IsNullOrWhiteSpace($submitToken) -or
+    ($configText.Contains('${SUBMIT_MCP_TOKEN}') -and $configText -notmatch [regex]::Escape($submitToken))
+Add-Check 'submit_mcp_secret_placeholder' $submitTokenSafe 'The Submit MCP token is referenced at runtime and is not embedded in the generated config.'
 Add-Check 'model_specs_count' (@([regex]::Matches($configText, '(?m)^    - name: agentos-')).Count -eq 4) 'The employee model catalog contains exactly four model specs.'
 $missingLabels = @('GPT-5.6 Sol', 'GPT-5.6 Terra', 'GPT-5.6 Luna', 'GPT-5.5') | Where-Object {
     -not $configText.Contains(('label: "' + $_ + '"'))

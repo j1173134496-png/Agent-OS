@@ -1,166 +1,166 @@
 {
-    "schema_version":  "agentos.v0.3.1.reasoning-matrix.v1",
-    "generated_at":  "2026-08-28T05:36:53.5876759Z",
-    "preferred_protocol":  "chat_completions",
-    "protocol":  "chat_completions",
-    "preferred_protocol_status":  "PASS",
-    "retry_policy":  {
-                         "retry_statuses":  [
-                                                429,
-                                                502,
-                                                503,
-                                                504
-                                            ],
-                         "max_attempts":  4,
-                         "delay_seconds":  2
-                     },
-    "reasoning_parameter":  "reasoning_effort",
-    "protocols":  [
-                      {
-                          "protocol":  "chat_completions",
-                          "status":  "PASS",
-                          "http_status":  200,
-                          "text_received":  true,
-                          "detail":  "completion_received"
-                      },
-                      {
-                          "protocol":  "responses",
-                          "status":  "PASS",
-                          "http_status":  200,
-                          "text_received":  true,
-                          "detail":  "completion_received"
-                      }
-                  ],
-    "streaming":  {
-                      "status":  "PASS",
-                      "http_status":  200,
-                      "detail":  "sse_data_received"
-                  },
-    "models":  [
-                   {
-                       "model":  "gpt-5.6-sol",
-                       "levels":  [
-                                      {
-                                          "value":  "low",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      },
-                                      {
-                                          "value":  "medium",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      },
-                                      {
-                                          "value":  "high",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      }
-                                  ],
-                       "supported_levels":  [
-                                                "low",
-                                                "medium",
-                                                "high"
-                                            ]
-                   },
-                   {
-                       "model":  "gpt-5.6-terra",
-                       "levels":  [
-                                      {
-                                          "value":  "low",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      },
-                                      {
-                                          "value":  "medium",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      },
-                                      {
-                                          "value":  "high",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      }
-                                  ],
-                       "supported_levels":  [
-                                                "low",
-                                                "medium",
-                                                "high"
-                                            ]
-                   },
-                   {
-                       "model":  "gpt-5.6-luna",
-                       "levels":  [
-                                      {
-                                          "value":  "low",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      },
-                                      {
-                                          "value":  "medium",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      },
-                                      {
-                                          "value":  "high",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      }
-                                  ],
-                       "supported_levels":  [
-                                                "low",
-                                                "medium",
-                                                "high"
-                                            ]
-                   },
-                   {
-                       "model":  "gpt-5.5",
-                       "levels":  [
-                                      {
-                                          "value":  "low",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      },
-                                      {
-                                          "value":  "medium",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      },
-                                      {
-                                          "value":  "high",
-                                          "status":  "PASS",
-                                          "http_status":  200,
-                                          "text_received":  true,
-                                          "detail":  "reasoning_parameter_accepted"
-                                      }
-                                  ],
-                       "supported_levels":  [
-                                                "low",
-                                                "medium",
-                                                "high"
-                                            ]
-                   }
-               ],
-    "gate":  "PASS"
+  "schema_version": "agentos.v0.3.1.reasoning-matrix.v1",
+  "generated_at": "2026-09-02T01:13:21.4052142Z",
+  "preferred_protocol": "chat_completions",
+  "protocol": "chat_completions",
+  "preferred_protocol_status": "PASS",
+  "retry_policy": {
+    "retry_statuses": [
+      429,
+      502,
+      503,
+      504
+    ],
+    "max_attempts": 4,
+    "delay_seconds": 2
+  },
+  "reasoning_parameter": "reasoning_effort",
+  "protocols": [
+    {
+      "protocol": "chat_completions",
+      "status": "PASS",
+      "http_status": 200,
+      "text_received": true,
+      "detail": "completion_received"
+    },
+    {
+      "protocol": "responses",
+      "status": "PASS",
+      "http_status": 200,
+      "text_received": true,
+      "detail": "completion_received"
+    }
+  ],
+  "streaming": {
+    "status": "PASS",
+    "http_status": 200,
+    "detail": "sse_data_received"
+  },
+  "models": [
+    {
+      "model": "gpt-5.6-sol",
+      "levels": [
+        {
+          "value": "low",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        },
+        {
+          "value": "medium",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        },
+        {
+          "value": "high",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        }
+      ],
+      "supported_levels": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    {
+      "model": "gpt-5.6-terra",
+      "levels": [
+        {
+          "value": "low",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        },
+        {
+          "value": "medium",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        },
+        {
+          "value": "high",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        }
+      ],
+      "supported_levels": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    {
+      "model": "gpt-5.6-luna",
+      "levels": [
+        {
+          "value": "low",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        },
+        {
+          "value": "medium",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        },
+        {
+          "value": "high",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        }
+      ],
+      "supported_levels": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    {
+      "model": "gpt-5.5",
+      "levels": [
+        {
+          "value": "low",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        },
+        {
+          "value": "medium",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        },
+        {
+          "value": "high",
+          "status": "PASS",
+          "http_status": 200,
+          "text_received": true,
+          "detail": "reasoning_parameter_accepted"
+        }
+      ],
+      "supported_levels": [
+        "low",
+        "medium",
+        "high"
+      ]
+    }
+  ],
+  "gate": "PASS"
 }

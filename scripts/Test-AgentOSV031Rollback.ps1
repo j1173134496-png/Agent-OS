@@ -25,9 +25,11 @@ $rollbackRequiredFiles = @(
     (Join-Path $rollbackRoot 'branding\agentos-theme.css'),
     (Join-Path $rollbackRoot 'branding\logo-mark.png')
 )
-$activeDigest = 'sha256:a59d8926a97a2d7387700c746d6b0ba8e88c352ecd47de0fe0bd7cc4b1ebdcf1'
+$composeText = if (Test-Path -LiteralPath $composePath) { [IO.File]::ReadAllText($composePath) } else { '' }
+$apiImageMatch = [regex]::Match($composeText, '(?m)^\s*image:\s*(agentos/librechat@sha256:[0-9a-f]{64})\s*$')
+$activeImage = if ($apiImageMatch.Success) { $apiImageMatch.Groups[1].Value } else { '' }
+$activeDigest = if ($activeImage -match '@(sha256:[0-9a-f]{64})$') { $matches[1] } else { '' }
 $rollbackDigest = 'sha256:a950bb5fe847ae3b00797bf02d0b26bcd4c12f27240ebad6fa9eedafefc59d52'
-$activeImage = "agentos/librechat@$activeDigest"
 $rollbackImage = "registry.librechat.ai/danny-avila/librechat@$rollbackDigest"
 $checks = [System.Collections.Generic.List[object]]::new()
 
@@ -115,8 +117,8 @@ try {
     Add-Check 'rollback_bundle_exists' (Test-Path -LiteralPath $rollbackComposePath) 'The rollback Compose override exists.' 'deployment/rollback/v0.3.0/compose.override.yaml'
     $missingRollbackFiles = @($rollbackRequiredFiles | Where-Object { -not (Test-Path -LiteralPath $_) })
     Add-Check 'rollback_bundle_complete' ($missingRollbackFiles.Count -eq 0) 'The complete V0.3.0 overlay bundle is present before switch.' (($missingRollbackFiles | ForEach-Object { [IO.Path]::GetRelativePath($root, $_).Replace('\', '/') }) -join ', ')
-    Add-Check 'active_digest_before' (($composeText = [IO.File]::ReadAllText($composePath)) -match [regex]::Escape($activeImage)) 'The active Compose file points to the V0.3.1 digest before rehearsal.' 'deployment/compose.yaml'
-    Add-Check 'active_service_before' ((Get-ContainerImageId) -eq ((& docker image inspect $activeImage --format '{{.Id}}' 2>$null) -join '').Trim()) 'The running API container starts on the V0.3.1 image.' 'docker inspect agentos-api'
+    Add-Check 'active_digest_before' ($apiImageMatch.Success -and -not [string]::IsNullOrWhiteSpace($activeDigest)) 'The active Compose file points to an immutable V0.3.1 API digest before rehearsal.' 'deployment/compose.yaml'
+    Add-Check 'active_service_before' ($apiImageMatch.Success -and (Get-ContainerImageId) -eq ((& docker image inspect $activeImage --format '{{.Id}}' 2>$null) -join '').Trim()) 'The running API container starts on the V0.3.1 image.' 'docker inspect agentos-api'
 
     $beforeMongo = Get-MongoSummary
     Add-Check 'mongo_summary_before' ($null -ne $beforeMongo) 'MongoDB collection counts were captured before rollback.' 'mongosh collection count'
