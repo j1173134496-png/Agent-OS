@@ -41,7 +41,7 @@ $serviceText = Read-RequiredFile 'source\librechat-maintained\packages\data-prov
 $toolsMenuText = Read-RequiredFile 'source\librechat-maintained\client\src\components\Chat\Input\ToolsDropdown.tsx'
 $themeText = Read-RequiredFile 'source\librechat-maintained\client\src\agentos-theme.css'
 $rolesText = Read-RequiredFile 'source\librechat-maintained\packages\data-provider\src\roles.ts'
-$migrationText = Read-RequiredFile 'deployment\runtime\v0.3.2\legacy-plugin-migration.json'
+$migrationText = Read-RequiredFile 'deployment\migrations\v0.3.2-legacy-plugin-migration.json'
 $newConvoText = Read-RequiredFile 'source\librechat-maintained\client\src\hooks\useNewConvo.ts'
 
 $manifest = $manifestText | ConvertFrom-Json

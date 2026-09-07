@@ -7,6 +7,7 @@
     "model_reasoning_contract": "deployment/agentos-reasoning-matrix.json",
     "managed_agents": "deployment/agents/*.json",
     "deployment_skills": "deployment/skill/*/SKILL.md",
+    "legacy_plugin_migration": "deployment/migrations/v0.3.2-legacy-plugin-migration.json",
     "role_policy": "scripts/Sync-AgentOSV032Policy.ps1",
     "agent_publisher": "scripts/Sync-AgentOSAgents.ps1"
   },

@@ -1,0 +1,21 @@
+{
+  "schema_version": "agentos.v0.3.2.legacy-plugin-migration.v1",
+  "release": "V0.3.2",
+  "status": "FROZEN_FOR_ROLLBACK_AND_AUDIT",
+  "active_runtime": {
+    "agentos_plugin_ids_injection": false,
+    "legacy_plugin_directory_loaded": false,
+    "legacy_session_state_loaded": false
+  },
+  "preserved_state": {
+    "collection": "agentos_conversation_plugins",
+    "retention": "preserve through one V0.3.2 rollback/audit cycle",
+    "deletion": "not performed by this release"
+  },
+  "rollback_source": "deployment/rollback/v0.3.0/",
+  "audit_notes": [
+    "The historical V0.3.0 overlay is isolated and is not referenced by the active Compose file.",
+    "Native LibreChat Agents, Skills, MCP tools, and image tools are the only active capability path.",
+    "A later cleanup release must archive the preserved collection before deletion and record the archive checksum."
+  ]
+}

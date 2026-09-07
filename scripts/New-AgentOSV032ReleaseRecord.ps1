@@ -68,13 +68,13 @@ $record = [ordered]@{
         'deployment/agents/smart-submit-v1.json' = Get-FileHashValue 'deployment\agents\smart-submit-v1.json'
         'deployment/agents/native-tool-registry.json' = Get-FileHashValue 'deployment\agents\native-tool-registry.json'
         'deployment/skill/submit-flow-skill/SKILL.md' = Get-FileHashValue 'deployment\skill\submit-flow-skill\SKILL.md'
-        'deployment/runtime/v0.3.2/legacy-plugin-migration.json' = Get-FileHashValue 'deployment\runtime\v0.3.2\legacy-plugin-migration.json'
+        'deployment/migrations/v0.3.2-legacy-plugin-migration.json' = Get-FileHashValue 'deployment\migrations\v0.3.2-legacy-plugin-migration.json'
     }
     evidence = [ordered]@{
         static_gate = 'deployment/runtime/v0.3.2/static-report.json'
         runtime_gate = 'deployment/runtime/v0.3.2/V0.3.2_GATE_REPORT.json'
         policy_sync = 'deployment/runtime/v0.3.2/policy-sync-report.json'
-        legacy_migration = 'deployment/runtime/v0.3.2/legacy-plugin-migration.json'
+        legacy_migration = 'deployment/migrations/v0.3.2-legacy-plugin-migration.json'
         source_tests = if ($null -ne $sourceTest) { $SourceTestReportPath.Replace($root + '\', '').Replace('\', '/') } else { $null }
         upstream_llm_and_image_validation = 'DEFERRED: relay endpoint is temporarily offline; no live conversation or image-generation result is claimed.'
     }
