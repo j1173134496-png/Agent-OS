@@ -1,0 +1,192 @@
+:root,
+html.light {
+  --agentos-orange: #ff6a00;
+  --agentos-orange-hover: #e85d00;
+  --agentos-orange-soft: #fff1e8;
+  --agentos-ink: #232323;
+  --agentos-muted: #66707a;
+  --agentos-border: #dfe4e8;
+
+  --background: 210 25% 97%;
+  --foreground: 0 0% 14%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 14%;
+  --border: 210 16% 88%;
+  --input: 210 16% 88%;
+  --ring: 24 100% 50%;
+  --ring-primary: var(--agentos-orange);
+  --primary: 24 100% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 20% 95%;
+  --secondary-foreground: 0 0% 14%;
+  --muted: 210 20% 95%;
+  --muted-foreground: 210 9% 42%;
+
+  --header-primary: var(--agentos-orange);
+  --header-hover: var(--agentos-orange-hover);
+  --header-button-hover: var(--agentos-orange-hover);
+  --surface-chat: #f4f6f8;
+  --surface-primary: #ffffff;
+  --surface-primary-alt: #f8fafb;
+  --surface-primary-contrast: #edf1f4;
+  --surface-secondary: #ffffff;
+  --surface-secondary-alt: #edf1f4;
+  --surface-tertiary: #edf1f4;
+  --surface-tertiary-alt: #ffffff;
+  --surface-active: #ffe5d4;
+  --surface-active-alt: #fff1e8;
+  --surface-hover: #fff1e8;
+  --surface-hover-alt: #ffd6bc;
+  --surface-submit: var(--agentos-orange);
+  --surface-submit-hover: var(--agentos-orange-hover);
+  --text-primary: var(--agentos-ink);
+  --text-secondary: #3f4850;
+  --text-secondary-alt: var(--agentos-muted);
+  --text-tertiary: #7a858f;
+  --border-light: var(--agentos-border);
+  --border-medium: #cbd3d9;
+  --border-medium-alt: #cbd3d9;
+  --green-500: var(--agentos-orange);
+  --green-600: var(--agentos-orange-hover);
+  --green-700: #c94f00;
+}
+
+html.dark {
+  --background: 210 14% 12%;
+  --foreground: 0 0% 96%;
+  --card: 210 14% 16%;
+  --card-foreground: 0 0% 96%;
+  --border: 210 10% 28%;
+  --input: 210 10% 28%;
+  --muted: 210 10% 21%;
+  --muted-foreground: 210 8% 68%;
+  --secondary: 210 10% 21%;
+  --secondary-foreground: 0 0% 96%;
+  --surface-chat: #171b1f;
+  --surface-primary: #20262b;
+  --surface-primary-alt: #171b1f;
+  --surface-primary-contrast: #30383f;
+  --surface-secondary: #20262b;
+  --surface-secondary-alt: #30383f;
+  --surface-tertiary: #30383f;
+  --surface-tertiary-alt: #20262b;
+  --surface-active: #5a2d10;
+  --surface-active-alt: #3d2415;
+  --surface-hover: #3d2415;
+  --surface-hover-alt: #5a2d10;
+  --text-primary: #f4f6f8;
+  --text-secondary: #d5dce1;
+  --text-secondary-alt: #aeb8c0;
+  --text-tertiary: #8a969f;
+  --border-light: #3a444c;
+  --border-medium: #4b5861;
+  --border-medium-alt: #4b5861;
+  --tw-ring-offset-color: #20262b;
+}
+
+html,
+body,
+#root {
+  background-color: #f4f6f8;
+  color: var(--agentos-ink);
+}
+
+html.dark,
+html.dark body,
+html.dark #root {
+  background-color: #171b1f;
+  color: #f4f6f8;
+}
+
+[class~='bg-header-primary'] {
+  background-color: var(--agentos-orange) !important;
+  color: #ffffff !important;
+}
+
+[class~='bg-header-primary'] [class*='text-'],
+[class~='bg-header-primary'] button,
+[class~='bg-header-primary'] svg {
+  color: #ffffff !important;
+}
+
+[class~='hover:bg-header-hover']:hover,
+[class~='hover:bg-header-button-hover']:hover,
+[class~='hover:bg-surface-submit-hover']:hover {
+  background-color: var(--agentos-orange-hover) !important;
+}
+
+[class~='bg-surface-submit'] {
+  background-color: var(--agentos-orange) !important;
+}
+
+[class~='text-green-500'],
+[class~='text-green-600'],
+[class~='text-green-700'] {
+  color: var(--agentos-orange) !important;
+}
+
+[class~='border-green-500'],
+[class~='border-green-600'],
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--agentos-orange) !important;
+}
+
+[class~='focus:border-green-500']:focus,
+[class~='focus-visible:border-green-500']:focus-visible,
+[class~='focus:ring-green-500']:focus {
+  border-color: var(--agentos-orange) !important;
+  --tw-ring-color: var(--agentos-orange);
+}
+
+[class~='hover:bg-surface-hover']:hover,
+[class~='hover:bg-surface-primary-alt']:hover {
+  background-color: var(--agentos-orange-soft) !important;
+}
+
+[class~='bg-surface-chat'] {
+  background-color: #f4f6f8 !important;
+}
+
+html.dark [class~='bg-surface-chat'] {
+  background-color: #171b1f !important;
+}
+
+/* Brand only known provider/tool assets. Never match generated files under /images/. */
+img[src*='/assets/openai.'],
+img[src^='assets/openai.'],
+img[src*='/assets/anthropic.'],
+img[src^='assets/anthropic.'],
+img[src*='/assets/claude.'],
+img[src^='assets/claude.'],
+img[src*='/assets/google.'],
+img[src^='assets/google.'],
+img[src*='/assets/gemini.'],
+img[src^='assets/gemini.'],
+img[src*='/assets/azure.'],
+img[src^='assets/azure.'],
+img[src*='/assets/mistral.'],
+img[src^='assets/mistral.'],
+img[src*='/assets/meta.'],
+img[src^='assets/meta.'],
+img[src*='/assets/deepseek.'],
+img[src^='assets/deepseek.'],
+img[src*='/assets/qwen.'],
+img[src^='assets/qwen.'],
+img[src*='/assets/ollama.'],
+img[src^='assets/ollama.'],
+img[src*='/assets/image_gen_oai.'],
+img[src^='assets/image_gen_oai.'],
+img[src*='/assets/image_edit_oai.'],
+img[src^='assets/image_edit_oai.'] {
+  content: url('/assets/logo-mark.png');
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  --tw-ring-color: var(--agentos-orange) !important;
+}
