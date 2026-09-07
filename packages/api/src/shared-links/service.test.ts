@@ -183,6 +183,23 @@ describe('autoMigrateLegacyLink', () => {
     }).lean();
     expect(ownerEntries).toHaveLength(1);
   });
+
+  test('serializes concurrent migrations for the same link', async () => {
+    const link = await createLegacyLink(true);
+    const args = {
+      _id: link._id,
+      conversationId: link.conversationId,
+      user: userId,
+      shareId: link.shareId,
+      isPublic: true,
+    };
+
+    await Promise.all([autoMigrateLegacyLink(args), autoMigrateLegacyLink(args)]);
+
+    const entries = await AclEntry.find({ resourceId: link._id }).lean();
+    expect(entries.filter((entry) => entry.principalType === PrincipalType.USER)).toHaveLength(1);
+    expect(entries.filter((entry) => entry.principalType === PrincipalType.PUBLIC)).toHaveLength(1);
+  });
 });
 
 describe('grantCreationPermissions', () => {

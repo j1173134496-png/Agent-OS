@@ -1,17 +1,17 @@
 import React from 'react';
 import { Link, Pin, PinOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { OGDialogContent, Button, useToastContext } from '@librechat/client';
 import {
   QueryKeys,
   Constants,
-  EModelEndpoint,
   PermissionBits,
   LocalStorageKeys,
   AgentListResponse,
 } from 'librechat-data-provider';
 import type t from 'librechat-data-provider';
-import { useLocalize, useDefaultConvo, useFavorites } from '~/hooks';
+import { useLocalize, useFavorites } from '~/hooks';
 import { renderAgentAvatar, clearMessagesCache } from '~/utils';
 import { useChatContext } from '~/Providers';
 
@@ -34,10 +34,10 @@ interface AgentDetailContentProps {
  */
 const AgentDetailContent: React.FC<AgentDetailContentProps> = ({ agent }) => {
   const localize = useLocalize();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { showToast } = useToastContext();
-  const getDefaultConversation = useDefaultConvo();
-  const { conversation, newConversation } = useChatContext();
+  const { conversation } = useChatContext();
   const { isFavoriteAgent, toggleFavoriteAgent } = useFavorites();
   const isFavorite = isFavoriteAgent(agent?.id);
 
@@ -66,22 +66,12 @@ const AgentDetailContent: React.FC<AgentDetailContentProps> = ({ agent }) => {
       clearMessagesCache(queryClient, conversation?.conversationId);
       queryClient.invalidateQueries([QueryKeys.messages]);
 
-      /** Template with agent configuration */
-      const template = {
-        conversationId: Constants.NEW_CONVO as string,
-        endpoint: EModelEndpoint.agents,
-        agent_id: agent.id,
-        title: localize('com_agents_chat_with', { name: agent.name || localize('com_ui_agent') }),
-      };
-
-      const currentConvo = getDefaultConversation({
-        conversation: { ...(conversation ?? {}), ...template },
-        preset: template,
-      });
-
-      newConversation({
-        template: currentConvo,
-        preset: template,
+      // The chat route initializes the Agent from this deep link. Avoid
+      // starting a second conversation transition here, which can race the
+      // route navigation and drop agent_id from the URL.
+      navigate(`/c/${Constants.NEW_CONVO}?agent_id=${encodeURIComponent(agent.id)}`, {
+        replace: true,
+        state: { focusChat: true },
       });
     }
   };

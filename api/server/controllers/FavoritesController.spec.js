@@ -1,9 +1,19 @@
 jest.mock('~/models', () => ({
   updateUser: jest.fn(),
   getUserById: jest.fn(),
+  getAgents: jest.fn(),
 }));
 
-const { updateUser, getUserById } = require('~/models');
+jest.mock('~/server/services/PermissionService', () => ({
+  findAccessibleResources: jest.fn(),
+  findPubliclyAccessibleResources: jest.fn(),
+}));
+
+const { updateUser, getUserById, getAgents } = require('~/models');
+const {
+  findAccessibleResources,
+  findPubliclyAccessibleResources,
+} = require('~/server/services/PermissionService');
 const { updateFavoritesController, getFavoritesController } = require('./FavoritesController');
 
 const makeRes = () => {
@@ -15,12 +25,15 @@ const makeRes = () => {
 
 const makeReq = (body = {}) => ({
   body,
-  user: { id: 'user-123' },
+  user: { id: 'user-123', role: 'USER' },
 });
 
 describe('FavoritesController', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    getAgents.mockResolvedValue([{ id: 'a1', _id: 'mongo-a1' }]);
+    findAccessibleResources.mockResolvedValue(['mongo-a1']);
+    findPubliclyAccessibleResources.mockResolvedValue([]);
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
 
@@ -238,6 +251,37 @@ describe('FavoritesController', () => {
   });
 
   describe('updateFavoritesController - persistence', () => {
+    it('rejects an Agent favorite without VIEW permission', async () => {
+      getAgents.mockResolvedValue([{ id: 'private-agent', _id: 'mongo-private-agent' }]);
+      const req = makeReq({ favorites: [{ agentId: 'private-agent' }] });
+      const res = makeRes();
+
+      await updateFavoritesController(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(res.json).toHaveBeenCalledWith({
+        code: 'AGENT_VIEW_REQUIRED',
+        message: 'You can only favorite Agents you are authorized to view.',
+        agent_ids: ['private-agent'],
+      });
+      expect(updateUser).not.toHaveBeenCalled();
+    });
+
+    it('allows an Agent favorite with VIEW permission', async () => {
+      getAgents.mockResolvedValue([{ id: 'visible-agent', _id: 'mongo-visible-agent' }]);
+      findAccessibleResources.mockResolvedValue(['mongo-visible-agent']);
+      updateUser.mockResolvedValue({ favorites: [{ agentId: 'visible-agent' }] });
+      const req = makeReq({ favorites: [{ agentId: 'visible-agent' }] });
+      const res = makeRes();
+
+      await updateFavoritesController(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(updateUser).toHaveBeenCalledWith('user-123', {
+        favorites: [{ agentId: 'visible-agent' }],
+      });
+    });
+
     it('returns 404 when user is not found', async () => {
       updateUser.mockResolvedValue(null);
       const req = makeReq({ favorites: [{ spec: 's1' }] });

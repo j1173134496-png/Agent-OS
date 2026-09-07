@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { QueryKeys, isAssistantsEndpoint } from 'librechat-data-provider';
+import { Constants, QueryKeys, isAssistantsEndpoint } from 'librechat-data-provider';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import type { TMessage } from 'librechat-data-provider';
@@ -138,8 +138,14 @@ export default function useChatHelpers(index = 0, paramId?: string) {
       isAssistants,
     });
 
-    // For non-assistants endpoints (using resumable streams), call abort endpoint first
-    if (conversationId && !isAssistants) {
+    const hasAbortableConversation =
+      !!conversationId &&
+      conversationId !== Constants.NEW_CONVO &&
+      conversationId !== Constants.PENDING_CONVO;
+
+    // For non-assistants endpoints (using resumable streams), call abort endpoint first.
+    // Placeholder conversation IDs do not identify a backend job and must not be sent to abort.
+    if (hasAbortableConversation && !isAssistants) {
       queryClient.setQueryData<ActiveJobsResponse>([QueryKeys.activeJobs], (old) => ({
         activeJobIds: (old?.activeJobIds ?? []).filter((id) => id !== conversationId),
       }));
@@ -157,8 +163,11 @@ export default function useChatHelpers(index = 0, paramId?: string) {
         clearAllSubmissions();
       }
     } else {
-      // For assistants endpoints, just clear submissions (existing behavior)
-      console.log('[useChatHelpers] Assistants endpoint, just clearing submissions');
+      console.log(
+        isAssistants
+          ? '[useChatHelpers] Assistants endpoint, just clearing submissions'
+          : '[useChatHelpers] No concrete conversation ID, clearing submissions without abort',
+      );
       clearAllSubmissions();
     }
   }, [conversationId, endpoint, endpointType, abortMutation, clearAllSubmissions, queryClient]);

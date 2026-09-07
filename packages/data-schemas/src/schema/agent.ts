@@ -109,6 +109,24 @@ const agentSchema: Schema<IAgent> = new Schema<IAgent>(
       default: false,
       index: true,
     },
+    publication_status: {
+      type: String,
+      enum: ['draft', 'pending_publish_validation', 'published', 'retired'],
+      default: 'draft',
+      index: true,
+    },
+    business_version: {
+      type: String,
+      default: undefined,
+    },
+    allowed_roles: {
+      type: [String],
+      default: undefined,
+    },
+    release_metadata: {
+      type: Schema.Types.Mixed,
+      default: undefined,
+    },
     /** MCP server names extracted from tools for efficient querying */
     mcpServerNames: {
       type: [String],
@@ -137,6 +155,7 @@ const agentSchema: Schema<IAgent> = new Schema<IAgent>(
 
 agentSchema.index({ id: 1, tenantId: 1 }, { unique: true });
 agentSchema.index({ updatedAt: -1, _id: 1 });
+agentSchema.index({ publication_status: 1, category: 1, updatedAt: -1 });
 agentSchema.index({ 'edges.to': 1 });
 
 export default agentSchema;

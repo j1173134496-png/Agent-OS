@@ -603,7 +603,7 @@ export const getMarketplaceAgents = (params: {
 }): Promise<a.AgentListResponse> => {
   return request.get(
     endpoints.agents({
-      // path: 'marketplace',
+      path: 'marketplace',
       options: params,
     }),
   );

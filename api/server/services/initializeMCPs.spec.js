@@ -55,6 +55,7 @@ jest.mock('~/config', () => ({
 }));
 
 const { logger } = require('@librechat/data-schemas');
+const { Constants } = require('librechat-data-provider');
 const initializeMCPs = require('./initializeMCPs');
 
 describe('initializeMCPs', () => {
@@ -197,6 +198,47 @@ describe('initializeMCPs', () => {
   });
 
   describe('Tool merging behavior', () => {
+    it('refuses startup when a required MCP server has zero runtime tools', async () => {
+      const originalRequiredTools = process.env.MCP_REQUIRED_TOOLS;
+      process.env.MCP_REQUIRED_TOOLS = 'submit-flow=7';
+      mockGetAppConfig.mockResolvedValue({
+        mcpConfig: { 'submit-flow': { type: 'streamable-http', url: 'http://localhost:8121/mcp' } },
+      });
+      mockMCPManagerInstance.getAppToolFunctions.mockResolvedValue({});
+
+      try {
+        await expect(initializeMCPs()).rejects.toThrow(
+          'Required server "submit-flow" discovered 0 tools; expected 7',
+        );
+        expect(mockMergeAppTools).not.toHaveBeenCalled();
+      } finally {
+        if (originalRequiredTools == null) delete process.env.MCP_REQUIRED_TOOLS;
+        else process.env.MCP_REQUIRED_TOOLS = originalRequiredTools;
+      }
+    });
+
+    it('allows startup when every required MCP server has the exact tool count', async () => {
+      const originalRequiredTools = process.env.MCP_REQUIRED_TOOLS;
+      process.env.MCP_REQUIRED_TOOLS = 'submit-flow=2';
+      const mcpServers = {
+        'submit-flow': { type: 'streamable-http', url: 'http://localhost:8121/mcp' },
+      };
+      const mcpTools = {
+        [`create_task${Constants.mcp_delimiter}submit-flow`]: jest.fn(),
+        [`get_task${Constants.mcp_delimiter}submit-flow`]: jest.fn(),
+      };
+      mockGetAppConfig.mockResolvedValue({ mcpConfig: mcpServers });
+      mockMCPManagerInstance.getAppToolFunctions.mockResolvedValue(mcpTools);
+
+      try {
+        await initializeMCPs();
+        expect(mockMergeAppTools).toHaveBeenCalledWith(mcpTools);
+      } finally {
+        if (originalRequiredTools == null) delete process.env.MCP_REQUIRED_TOOLS;
+        else process.env.MCP_REQUIRED_TOOLS = originalRequiredTools;
+      }
+    });
+
     it('should NOT merge tools when no configured servers exist', async () => {
       mockGetAppConfig.mockResolvedValue({
         mcpConfig: null, // No configured servers

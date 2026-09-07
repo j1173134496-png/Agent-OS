@@ -4,7 +4,9 @@ import { tenantSafeBulkWrite } from '~/utils/tenantBulkWrite';
 
 export function createAgentCategoryMethods(mongoose: typeof import('mongoose')): {
   getActiveCategories: () => Promise<IAgentCategory[]>;
-  getCategoriesWithCounts: () => Promise<(IAgentCategory & { agentCount: number })[]>;
+  getCategoriesWithCounts: (
+    agentFilter?: Record<string, unknown>,
+  ) => Promise<(IAgentCategory & { agentCount: number })[]>;
   getValidCategoryValues: () => Promise<string[]>;
   seedCategories: (
     categories: Array<{
@@ -41,11 +43,18 @@ export function createAgentCategoryMethods(mongoose: typeof import('mongoose')):
    * Get categories with agent counts
    * @returns Categories with agent counts
    */
-  async function getCategoriesWithCounts(): Promise<(IAgentCategory & { agentCount: number })[]> {
+  async function getCategoriesWithCounts(
+    agentFilter: Record<string, unknown> = {},
+  ): Promise<(IAgentCategory & { agentCount: number })[]> {
     const Agent = mongoose.models.Agent;
 
     const categoryCounts = await Agent.aggregate([
-      { $match: { category: { $exists: true, $ne: null } } },
+      {
+        $match: {
+          ...agentFilter,
+          category: { $exists: true, $ne: null },
+        },
+      },
       { $group: { _id: '$category', count: { $sum: 1 } } },
     ]);
 

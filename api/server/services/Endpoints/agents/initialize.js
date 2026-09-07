@@ -286,6 +286,13 @@ const initializeClient = async ({ req, res, signal, endpointOption }) => {
     throw new Error('Agent not found');
   }
 
+  logger.info('[initializeClient] Loaded primary agent before model validation', {
+    agentId: primaryAgent.id,
+    provider: primaryAgent.provider,
+    model: primaryAgent.model,
+    modelParameterKeys: Object.keys(primaryAgent.model_parameters ?? {}).sort(),
+  });
+
   const modelsConfig = await getModelsConfig(req);
   const validationResult = await validateAgentModel({
     req,

@@ -77,6 +77,7 @@ const {
   revertAgentVersion: revertAgentVersionHandler,
   updateAgent: updateAgentHandler,
   getListAgents: getListAgentsHandler,
+  getMarketplaceAgents: getMarketplaceAgentsHandler,
 } = require('./v1');
 
 const {
@@ -1301,6 +1302,35 @@ describe('Agent Controllers - Mass Assignment Protection', () => {
       expect(response.data).toHaveLength(1);
       expect(response.data[0].id).toBe(agentA1.id);
       expect(response.data[0].name).toBe('Agent A1');
+    });
+
+    test('marketplace returns only published agents allowed for the current role', async () => {
+      await Agent.updateOne(
+        { _id: agentA1._id },
+        { $set: { publication_status: 'published', allowed_roles: ['USER'] } },
+      );
+      await Agent.updateOne(
+        { _id: agentA2._id },
+        { $set: { publication_status: 'draft', allowed_roles: ['USER'] } },
+      );
+
+      mockReq.user.id = userB.toString();
+      mockReq.user.role = 'USER';
+      mockReq.query = { requiredPermission: '15' };
+      findAccessibleResources.mockResolvedValue([agentA1._id, agentA2._id]);
+      findPubliclyAccessibleResources.mockResolvedValue([]);
+
+      await getMarketplaceAgentsHandler(mockReq, mockRes);
+
+      expect(findAccessibleResources).toHaveBeenCalledWith({
+        userId: userB.toString(),
+        role: 'USER',
+        resourceType: 'agent',
+        requiredPermissions: PermissionBits.VIEW,
+      });
+      const response = mockRes.json.mock.calls[0][0];
+      expect(response.data).toHaveLength(1);
+      expect(response.data[0].id).toBe(agentA1.id);
     });
 
     test('should return only expected safe list fields for VIEW callers', async () => {

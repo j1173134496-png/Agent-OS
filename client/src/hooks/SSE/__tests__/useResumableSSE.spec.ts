@@ -999,6 +999,53 @@ describe('useResumableSSE - 404 error path', () => {
     unmount();
   });
 
+  it('clears submission and reports an invalid start response without opening SSE', async () => {
+    (request.post as jest.Mock).mockResolvedValueOnce({
+      conversationId: CONV_ID,
+      status: 'started',
+    });
+    const submission = buildSubmission();
+    const chatHelpers = buildChatHelpers();
+
+    const { unmount } = renderHook(() => useResumableSSE(submission, chatHelpers));
+
+    await waitFor(() => {
+      expect(mockSetSubmission).toHaveBeenCalledWith(null);
+    });
+
+    expect(mockSSEInstances).toHaveLength(0);
+    expect(mockErrorHandler).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: {
+          text: JSON.stringify({
+            code: 'INVALID_START_RESPONSE',
+            message: 'Generation start response did not include a valid streamId.',
+          }),
+          metadata: { streamStartFailed: true },
+        },
+        submission,
+      }),
+    );
+    expect(mockSetIsSubmitting).toHaveBeenCalledWith(false);
+    expect(mockSetShowStopButton).toHaveBeenCalledWith(false);
+    unmount();
+  });
+
+  it('accepts a nested start response from a response wrapper', async () => {
+    (request.post as jest.Mock).mockResolvedValueOnce({ data: { streamId: 'nested-stream' } });
+    const submission = buildSubmission();
+    const chatHelpers = buildChatHelpers();
+
+    const { unmount } = renderHook(() => useResumableSSE(submission, chatHelpers));
+
+    await waitFor(() => {
+      expect(mockSSEInstances).toHaveLength(1);
+    });
+
+    expect(mockSSEInstances[0].stream).toHaveBeenCalledTimes(1);
+    unmount();
+  });
+
   it('replays title events from resume state sync', async () => {
     const submission = buildSubmission();
     const chatHelpers = buildChatHelpers();

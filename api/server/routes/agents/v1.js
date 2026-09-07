@@ -20,6 +20,11 @@ const checkAgentCreate = generateCheckAccess({
   permissions: [Permissions.USE, Permissions.CREATE],
   getRoleByName,
 });
+const checkMarketplaceAccess = generateCheckAccess({
+  permissionType: PermissionTypes.MARKETPLACE,
+  permissions: [Permissions.USE],
+  getRoleByName,
+});
 
 router.use(requireJwtAuth);
 
@@ -39,7 +44,12 @@ router.use('/tools', configMiddleware, tools);
  * Get all agent categories with counts
  * @route GET /agents/categories
  */
-router.get('/categories', v1.getAgentCategories);
+router.get('/categories', checkMarketplaceAccess, v1.getAgentCategories);
+/**
+ * Lists published company Agents for Marketplace browsing.
+ * @route GET /agents/marketplace
+ */
+router.get('/marketplace', checkMarketplaceAccess, v1.getMarketplaceAgents);
 /**
  * Creates an agent.
  * @route POST /agents

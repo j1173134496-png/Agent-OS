@@ -10,12 +10,14 @@ const RESOURCE_MANAGEMENT_FIELDS: Permissions[] = [
 /**
  * Permission types where CREATE/SHARE/SHARE_PUBLIC must default to false for USER.
  * MEMORIES is excluded: its CREATE/READ/UPDATE apply to the user's own private data.
- * AGENTS/PROMPTS are excluded: CREATE=true is intentional (users own their agents/prompts).
+ * PROMPTS remains user-owned. Company Agents and Skills are administrator-published resources.
  * Add new types here if they gate shared/multi-user resources.
  */
 const RESOURCE_PERMISSION_TYPES: PermissionTypes[] = [
+  PermissionTypes.AGENTS,
   PermissionTypes.MCP_SERVERS,
   PermissionTypes.REMOTE_AGENTS,
+  PermissionTypes.SKILLS,
 ];
 
 describe('roleDefaults', () => {
@@ -145,13 +147,13 @@ describe('roleDefaults', () => {
       });
     });
 
-    it('grants USER USE+CREATE but no sharing by default', () => {
+    it('grants USER USE but no creation or sharing by default', () => {
       const userSkills = roleDefaults[SystemRoles.USER].permissions[
         PermissionTypes.SKILLS
       ] as Record<string, boolean>;
       expect(userSkills).toEqual({
         [Permissions.USE]: true,
-        [Permissions.CREATE]: true,
+        [Permissions.CREATE]: false,
         [Permissions.SHARE]: false,
         [Permissions.SHARE_PUBLIC]: false,
       });

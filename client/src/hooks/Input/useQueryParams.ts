@@ -80,6 +80,13 @@ export default function useQueryParams({
     if (projectId) {
       preservedParams.set(PROJECT_ID_SEARCH_PARAM, projectId);
     }
+    // Keep native Agent deep links alive while URL settings are normalized.
+    // Without this, processing `?agent_id=...` clears the Agent selection and
+    // the default model spec takes over the new conversation.
+    const agentId = searchParams.get('agent_id');
+    if (agentId) {
+      preservedParams.set('agent_id', agentId);
+    }
     return preservedParams;
   }, [searchParams]);
 

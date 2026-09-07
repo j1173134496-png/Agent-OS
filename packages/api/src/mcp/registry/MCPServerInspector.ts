@@ -76,7 +76,11 @@ export class MCPServerInspector {
       this.config.startup !== false &&
       !this.config.requiresOAuth &&
       !hasCustomUserVars(this.config) &&
-      !hasRuntimeContextPlaceholders(this.config) &&
+      (!hasRuntimeContextPlaceholders(this.config) ||
+        // An explicitly startup-enabled server may use runtime identity
+        // headers: discovery only reads metadata/tool schemas, while runtime
+        // calls still replace those headers with the real request context.
+        (this.config.startup === true && !hasRuntimeUrlPlaceholders(this.config))) &&
       !this.config.obo
     ) {
       let tempConnection = false;

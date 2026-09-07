@@ -73,6 +73,36 @@ type StartGenerationError = {
   };
 };
 
+type StartGenerationResponse = {
+  streamId?: unknown;
+  data?: unknown;
+};
+
+const getStartGenerationStreamId = (response: unknown): string | null => {
+  if (response == null || typeof response !== 'object') {
+    return null;
+  }
+
+  const candidates: unknown[] = [response];
+  const nestedData = (response as StartGenerationResponse).data;
+  if (nestedData != null) {
+    candidates.push(nestedData);
+  }
+
+  for (const candidate of candidates) {
+    if (candidate == null || typeof candidate !== 'object') {
+      continue;
+    }
+
+    const streamId = (candidate as StartGenerationResponse).streamId;
+    if (typeof streamId === 'string' && streamId.trim() !== '') {
+      return streamId;
+    }
+  }
+
+  return null;
+};
+
 const toStartGenerationError = (error: unknown): StartGenerationError | undefined =>
   error != null && typeof error === 'object' ? (error as StartGenerationError) : undefined;
 
@@ -1127,12 +1157,36 @@ export default function useResumableSSE(
         requestAttempts += 1;
         try {
           // Use request.post which handles auth token refresh via axios interceptors
-          const data = (await request.post(url, payload)) as { streamId: string };
+          const response = await request.post(url, payload);
           if (signal?.aborted) {
             return null;
           }
-          console.log('[ResumableSSE] Generation started:', { streamId: data.streamId });
-          return data.streamId;
+
+          const responseKeys =
+            response != null && typeof response === 'object' ? Object.keys(response).join(',') : '';
+          console.log(
+            `[ResumableSSE] Generation start response shape: type=${typeof response} keys=${responseKeys}`,
+          );
+          const returnedStreamId = getStartGenerationStreamId(response);
+          if (!returnedStreamId) {
+            const invalidResponseError = new Error(
+              'Generation start response did not include a valid streamId.',
+            ) as Error & {
+              code: string;
+              response: { data: Record<string, string> };
+            };
+            invalidResponseError.code = 'INVALID_START_RESPONSE';
+            invalidResponseError.response = {
+              data: {
+                code: invalidResponseError.code,
+                message: invalidResponseError.message,
+              },
+            };
+            throw invalidResponseError;
+          }
+
+          console.log('[ResumableSSE] Generation started:', { streamId: returnedStreamId });
+          return returnedStreamId;
         } catch (error) {
           if (signal?.aborted) {
             return null;

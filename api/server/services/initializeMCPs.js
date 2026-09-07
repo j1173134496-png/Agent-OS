@@ -1,7 +1,38 @@
 const mongoose = require('mongoose');
 const { logger } = require('@librechat/data-schemas');
+const { Constants } = require('librechat-data-provider');
 const { mergeAppTools, getAppConfig } = require('./Config');
 const { createMCPServersRegistry, createMCPManager } = require('~/config');
+
+const parseRequiredMcpTools = (rawValue) => {
+  if (rawValue == null || rawValue.trim() === '') return {};
+  const required = {};
+  for (const entry of rawValue.split(',')) {
+    const [serverName, countValue] = entry.split('=', 2).map((part) => part.trim());
+    const count = Number.parseInt(countValue, 10);
+    if (!serverName || !Number.isInteger(count) || count < 1) {
+      throw new Error(
+        'MCP_REQUIRED_TOOLS must use comma-separated server=count entries with positive counts.',
+      );
+    }
+    required[serverName] = count;
+  }
+  return required;
+};
+
+const assertRequiredMcpTools = (mcpServers, mcpTools) => {
+  const required = parseRequiredMcpTools(process.env.MCP_REQUIRED_TOOLS);
+  for (const [serverName, expectedCount] of Object.entries(required)) {
+    if (!Object.prototype.hasOwnProperty.call(mcpServers, serverName)) continue;
+    const suffix = `${Constants.mcp_delimiter}${serverName}`;
+    const actualCount = Object.keys(mcpTools).filter((toolName) => toolName.endsWith(suffix)).length;
+    if (actualCount !== expectedCount) {
+      throw new Error(
+        `[MCP] Required server "${serverName}" discovered ${actualCount} tools; expected ${expectedCount}. Refusing startup readiness.`,
+      );
+    }
+  }
+};
 
 /**
  * Resolves the current request's effective MCP allowlists from the merged (tenant-scoped)
@@ -42,6 +73,7 @@ async function initializeMCPs() {
 
     if (mcpServers && Object.keys(mcpServers).length > 0) {
       const mcpTools = (await mcpManager.getAppToolFunctions()) || {};
+      assertRequiredMcpTools(mcpServers, mcpTools);
       await mergeAppTools(mcpTools);
       const serverCount = Object.keys(mcpServers).length;
       const toolCount = Object.keys(mcpTools).length;

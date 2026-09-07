@@ -250,17 +250,10 @@ describe('AgentDetail', () => {
       const startChatButton = screen.getByRole('button', { name: 'com_agents_start_chat' });
       await user.click(startChatButton);
 
-      expect(mockNewConversation).toHaveBeenCalledWith({
-        template: {
-          conversationId: Constants.NEW_CONVO,
-          endpoint: EModelEndpoint.agents,
-        },
-        preset: {
-          conversationId: Constants.NEW_CONVO,
-          endpoint: EModelEndpoint.agents,
-          agent_id: 'test-agent-id',
-          title: 'Chat with Test Agent',
-        },
+      expect(mockNewConversation).not.toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith('/c/new?agent_id=test-agent-id', {
+        replace: true,
+        state: { focusChat: true },
       });
     });
 

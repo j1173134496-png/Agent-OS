@@ -277,7 +277,7 @@ export function createAgentMethods(
     searchParameter: FilterQuery<IAgent>,
     versionIndex: number,
   ) => Promise<IAgent>;
-  countPromotedAgents: () => Promise<number>;
+  countPromotedAgents: (filter?: Record<string, unknown>) => Promise<number>;
   addAgentResourceFile: ({
     agent_id,
     tool_resource,
@@ -968,9 +968,9 @@ export function createAgentMethods(
   /**
    * Counts the number of promoted agents.
    */
-  async function countPromotedAgents(): Promise<number> {
+  async function countPromotedAgents(filter: Record<string, unknown> = {}): Promise<number> {
     const Agent = mongoose.models.Agent as Model<IAgent>;
-    return await Agent.countDocuments({ is_promoted: true });
+    return await Agent.countDocuments({ ...filter, is_promoted: true });
   }
 
   /** Removes an agent from the favorites of specified users. */

@@ -518,4 +518,73 @@ describe('buildEndpointOption - defaultParamsEndpoint parsing', () => {
       expect.objectContaining({ text: 'Invalid model spec' }),
     );
   });
+
+  it('should not enforce ordinary model specs for a native Agent selected by agent_id', async () => {
+    mockGetEndpointsConfig.mockResolvedValue({});
+
+    const req = createReq(
+      {
+        endpoint: EModelEndpoint.agents,
+        agent_id: 'smart-submit-v1',
+      },
+      {
+        modelSpecs: {
+          enforce: true,
+          list: [
+            {
+              name: 'agentos-gpt-5-5',
+              preset: {
+                endpoint: EModelEndpoint.custom,
+                model: 'gpt-5.5',
+              },
+            },
+          ],
+        },
+      },
+    );
+    req.baseUrl = '/api/agents/chat';
+    const res = createRes();
+    const next = jest.fn();
+    const { handleError } = require('@librechat/api');
+
+    await buildEndpointOption(req, res, next);
+
+    expect(handleError).not.toHaveBeenCalled();
+    expect(mockAgentBuildOptions).toHaveBeenCalledWith(
+      req,
+      EModelEndpoint.agents,
+      expect.objectContaining({ agent_id: 'smart-submit-v1' }),
+      undefined,
+    );
+    expect(next).toHaveBeenCalledTimes(1);
+  });
+
+  it('should still require a model spec for an Agent request without agent_id', async () => {
+    mockGetEndpointsConfig.mockResolvedValue({});
+
+    const req = createReq(
+      { endpoint: EModelEndpoint.agents },
+      {
+        modelSpecs: {
+          enforce: true,
+          list: [
+            {
+              name: 'agentos-gpt-5-5',
+              preset: { endpoint: EModelEndpoint.agents, model: 'gpt-5.5' },
+            },
+          ],
+        },
+      },
+    );
+    req.baseUrl = '/api/agents/chat';
+    const res = createRes();
+    const next = jest.fn();
+    const { handleError } = require('@librechat/api');
+
+    await buildEndpointOption(req, res, next);
+
+    expect(handleError).toHaveBeenCalledWith(res, { text: 'No model spec selected' });
+    expect(mockAgentBuildOptions).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
+  });
 });

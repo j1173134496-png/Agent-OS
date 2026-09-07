@@ -57,7 +57,15 @@ async function buildEndpointOption(req, res, next) {
 
   const appConfig = req.config;
   let appliedModelSpecPrivateFields = new Set();
-  if (appConfig.modelSpecs?.list?.length && appConfig.modelSpecs?.enforce) {
+  // A persisted native Agent is selected by agent_id, not by the ordinary
+  // model-spec selector. Enforcing model specs for this request would emit a
+  // legacy SSE error response because Agent conversations intentionally have
+  // no spec, which the resumable client cannot use as a generation start.
+  const hasExplicitAgentId =
+    isAgents && typeof parsedBody.agent_id === 'string' && parsedBody.agent_id.trim() !== '';
+  const shouldEnforceModelSpec =
+    appConfig.modelSpecs?.list?.length && appConfig.modelSpecs?.enforce && !hasExplicitAgentId;
+  if (shouldEnforceModelSpec) {
     /** @type {{ list: TModelSpec[] }}*/
     const { list } = appConfig.modelSpecs;
     const rawSpec = req.body.spec;

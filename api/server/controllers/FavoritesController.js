@@ -1,4 +1,9 @@
-const { updateUser, getUserById } = require('~/models');
+const { updateUser, getUserById, getAgents } = require('~/models');
+const {
+  findAccessibleResources,
+  findPubliclyAccessibleResources,
+} = require('~/server/services/PermissionService');
+const { PermissionBits, ResourceType } = require('librechat-data-provider');
 
 const MAX_FAVORITES = 50;
 const MAX_STRING_LENGTH = 256;
@@ -83,6 +88,43 @@ const updateFavoritesController = async (req, res) => {
         return res
           .status(400)
           .json({ message: 'agentId cannot be combined with model or endpoint' });
+      }
+    }
+
+    const agentIds = favorites
+      .filter((favorite) => !!favorite.agentId)
+      .map((favorite) => favorite.agentId);
+    if (agentIds.length > 0) {
+      const [agents, accessibleIds, publicIds] = await Promise.all([
+        getAgents({ id: { $in: agentIds } }),
+        findAccessibleResources({
+          userId,
+          role: req.user.role,
+          resourceType: ResourceType.AGENT,
+          requiredPermissions: PermissionBits.VIEW,
+        }),
+        findPubliclyAccessibleResources({
+          resourceType: ResourceType.AGENT,
+          requiredPermissions: PermissionBits.VIEW,
+        }),
+      ]);
+      const permittedObjectIds = new Set(
+        [...(accessibleIds ?? []), ...(publicIds ?? [])].map((id) => id.toString()),
+      );
+      const permittedAgentIds = new Set(
+        (agents ?? [])
+          .filter((agent) => agent?._id && permittedObjectIds.has(agent._id.toString()))
+          .map((agent) => agent.id),
+      );
+      const unauthorizedAgentIds = [...new Set(agentIds)].filter(
+        (agentId) => !permittedAgentIds.has(agentId),
+      );
+      if (unauthorizedAgentIds.length > 0) {
+        return res.status(403).json({
+          code: 'AGENT_VIEW_REQUIRED',
+          message: 'You can only favorite Agents you are authorized to view.',
+          agent_ids: unauthorizedAgentIds,
+        });
       }
     }
 

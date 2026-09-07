@@ -207,6 +207,13 @@ const useNewConvo = (index = 0) => {
             defaultParamsEndpoint,
           });
 
+          // A native Agent preset is the source of truth for the selected
+          // Agent. Keep it on the conversation even when parseConvo has no
+          // prior Agent state to merge (for example on a deep link).
+          if (isAgentsEndpoint(defaultEndpoint) && activePreset?.agent_id) {
+            conversation.agent_id = activePreset.agent_id;
+          }
+
           if (hasExplicitChatProjectId) {
             conversation.chatProjectId = explicitChatProjectId ?? null;
           } else {
@@ -249,6 +256,16 @@ const useNewConvo = (index = 0) => {
             nextConversation.chatProjectId
           ) {
             nextParams.set('projectId', nextConversation.chatProjectId);
+          }
+          const routeAgentId =
+            nextConversation.agent_id ??
+            (isAgentsEndpoint(nextConversation.endpoint) ? activePreset?.agent_id : undefined);
+          if (routeAgentId) {
+            // Starting a native Agent from Marketplace must keep the Agent
+            // identity in the URL; otherwise the default model spec can
+            // silently replace it with an ordinary text conversation.
+            nextParams.delete('spec');
+            nextParams.set('agent_id', routeAgentId);
           }
 
           const searchParamsString = nextParams.toString();
@@ -308,10 +325,18 @@ const useNewConvo = (index = 0) => {
       const paramEndpoint =
         isParamEndpoint(_template.endpoint ?? '', _template.endpointType ?? '') === true ||
         isParamEndpoint(_preset?.endpoint ?? '', _preset?.endpointType ?? '');
+      const agentId = _template.agent_id ?? _preset?.agent_id;
+      const isAgentTemplate = isAgentsEndpoint(_template.endpoint ?? _preset?.endpoint ?? '');
       const template =
         paramEndpoint === true && templateConvoId && templateConvoId === Constants.NEW_CONVO
-          ? { endpoint: _template.endpoint, chatProjectId: _template.chatProjectId }
-          : _template;
+          ? {
+              endpoint: _template.endpoint,
+              chatProjectId: _template.chatProjectId,
+              ...(isAgentTemplate && agentId ? { agent_id: agentId } : {}),
+            }
+          : isAgentTemplate && agentId
+            ? { ..._template, agent_id: agentId }
+            : _template;
 
       const conversation = {
         conversationId: Constants.NEW_CONVO as string,

@@ -177,6 +177,37 @@ describe('MCPServerInspector', () => {
       expect(MCPConnectionFactory.create).not.toHaveBeenCalled();
     });
 
+    it('should discover tools when startup is explicitly enabled with runtime identity headers', async () => {
+      mockDetectOAuthRequirement.mockResolvedValue({
+        requiresOAuth: false,
+        method: 'no-metadata-found',
+      });
+      const tempMockConnection = createMockConnection('test_server');
+      (MCPConnectionFactory.create as jest.Mock).mockResolvedValue(tempMockConnection);
+
+      const rawConfig: t.MCPOptions = {
+        type: 'streamable-http',
+        url: 'https://mcp-server.example.com/mcp',
+        startup: true,
+        headers: {
+          'X-LibreChat-User-Email': '{{LIBRECHAT_USER_EMAIL}}',
+        },
+      };
+
+      const result = await MCPServerInspector.inspect('test_server', rawConfig);
+
+      expect(MCPConnectionFactory.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          serverName: 'test_server',
+          serverConfig: rawConfig,
+        }),
+      );
+      expect(tempMockConnection.disconnect).toHaveBeenCalled();
+      expect(result.headers).toEqual(rawConfig.headers);
+      expect(result.tools).toBe('listFiles');
+      expect(result.toolFunctions).toEqual(expect.any(Object));
+    });
+
     it('should skip OAuth detection when trusted URL needs runtime user context', async () => {
       const rawConfig: t.MCPOptions = {
         type: 'streamable-http',

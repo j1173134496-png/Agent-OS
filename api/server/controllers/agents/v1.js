@@ -937,8 +937,9 @@ const deleteAgentHandler = async (req, res) => {
  * @param {string} [req.query.user] - The user ID of the agent's author.
  * @returns {Promise<AgentListResponse>} 200 - success response - application/json
  */
-const getListAgentsHandler = async (req, res) => {
+const getListAgentsHandler = async (req, res, options = {}) => {
   try {
+    const { marketplaceOnly = false } = options;
     const userId = req.user.id;
     const { category, search, limit = 100, cursor, promoted } = req.query;
     let requiredPermission = req.query.requiredPermission;
@@ -950,9 +951,17 @@ const getListAgentsHandler = async (req, res) => {
     } else if (typeof requiredPermission !== 'number') {
       requiredPermission = PermissionBits.VIEW;
     }
-    const canReturnSkillConfig = hasEditBit(requiredPermission);
     // Base filter
     const filter = {};
+
+    if (marketplaceOnly) {
+      // Marketplace is a publication boundary, not a second view of personal
+      // drafts. The route also forces VIEW below, so client input cannot widen it.
+      filter.publication_status = 'published';
+      filter.allowed_roles = { $in: [req.user.role] };
+      requiredPermission = PermissionBits.VIEW;
+    }
+    const canReturnSkillConfig = hasEditBit(requiredPermission);
 
     // Handle category filter - only apply if category is defined
     if (category !== undefined && category.trim() !== '') {
@@ -1274,8 +1283,8 @@ const revertAgentVersionHandler = async (req, res) => {
  */
 const getAgentCategories = async (_req, res) => {
   try {
-    const categories = await db.getCategoriesWithCounts();
-    const promotedCount = await db.countPromotedAgents();
+    const categories = await db.getCategoriesWithCounts({ publication_status: 'published' });
+    const promotedCount = await db.countPromotedAgents({ publication_status: 'published' });
     const formattedCategories = categories.map((category) => ({
       value: category.value,
       label: category.label,
@@ -1308,6 +1317,13 @@ const getAgentCategories = async (_req, res) => {
     });
   }
 };
+
+/**
+ * Lists only published company Agents for the native Marketplace boundary.
+ * The caller cannot request EDIT or use the general personal-agent list here.
+ */
+const getMarketplaceAgentsHandler = (req, res) =>
+  getListAgentsHandler(req, res, { marketplaceOnly: true });
 module.exports = {
   createAgent: createAgentHandler,
   getAgent: getAgentHandler,
@@ -1315,6 +1331,7 @@ module.exports = {
   duplicateAgent: duplicateAgentHandler,
   deleteAgent: deleteAgentHandler,
   getListAgents: getListAgentsHandler,
+  getMarketplaceAgents: getMarketplaceAgentsHandler,
   uploadAgentAvatar: uploadAgentAvatarHandler,
   revertAgentVersion: revertAgentVersionHandler,
   getAgentCategories,

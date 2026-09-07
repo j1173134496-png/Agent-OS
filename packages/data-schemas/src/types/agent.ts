@@ -44,6 +44,11 @@ export interface IAgent extends Omit<Document, 'model'> {
   category: string;
   support_contact?: ISupportContact;
   is_promoted?: boolean;
+  /** Versioned publication state used by the native Agent Marketplace boundary. */
+  publication_status?: 'draft' | 'pending_publish_validation' | 'published' | 'retired';
+  business_version?: string;
+  allowed_roles?: string[];
+  release_metadata?: Record<string, unknown>;
   /** MCP server names extracted from tools for efficient querying */
   mcpServerNames?: string[];
   /** Per-tool configuration (defer_loading, allowed_callers) */

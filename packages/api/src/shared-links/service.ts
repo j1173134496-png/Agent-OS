@@ -18,6 +18,8 @@ function getAclService(): AccessControlService {
   return _aclService;
 }
 
+const legacyMigrationLocks = new Map<string, Promise<void>>();
+
 interface RawSharedLink {
   _id?: Types.ObjectId;
   conversationId: string;
@@ -29,7 +31,7 @@ interface RawSharedLink {
   expiredAt?: Date;
 }
 
-export async function autoMigrateLegacyLink(share: RawSharedLink): Promise<void> {
+async function migrateLegacyLink(share: RawSharedLink): Promise<void> {
   const shareId = share._id;
   if (!shareId) {
     return;
@@ -120,6 +122,31 @@ export async function autoMigrateLegacyLink(share: RawSharedLink): Promise<void>
     ownerGranted,
     publicGranted,
   });
+}
+
+/** Serialize migrations for the same link so concurrent requests cannot both upsert public ACLs. */
+export async function autoMigrateLegacyLink(share: RawSharedLink): Promise<void> {
+  const shareId = share._id;
+  if (!shareId) {
+    return;
+  }
+
+  const resourceId = shareId.toString();
+  const activeMigration = legacyMigrationLocks.get(resourceId);
+  if (activeMigration) {
+    await activeMigration;
+    return;
+  }
+
+  const migration = migrateLegacyLink(share);
+  legacyMigrationLocks.set(resourceId, migration);
+  try {
+    await migration;
+  } finally {
+    if (legacyMigrationLocks.get(resourceId) === migration) {
+      legacyMigrationLocks.delete(resourceId);
+    }
+  }
 }
 
 export async function grantCreationPermissions(
