@@ -54,9 +54,11 @@ Add-Check 'policy-report' (Test-Path -LiteralPath $policyReportPath -PathType Le
 $roles = $null
 $agent = $null
 $collections = $null
+$manifest = Get-Content -LiteralPath (Join-Path $root 'deployment\agents\smart-submit-v1.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 try {
     $roles = Invoke-MongoJson "db.roles.find({name: {`$in: ['ADMIN','USER']}}, {name: 1, permissions: 1, _id: 0}).toArray()"
-    $agent = Invoke-MongoJson "db.agents.findOne({id: 'smart-submit-v1'}, {_id: 0, id: 1, name: 1, publication_status: 1, business_version: 1, allowed_roles: 1, skills: 1, skills_enabled: 1, tools: 1, mcpServerNames: 1, release_metadata: 1})"
+    $agentId = [string]$manifest.agent_id
+    $agent = Invoke-MongoJson "db.agents.findOne({id: '$agentId'}, {_id: 0, id: 1, name: 1, business_agent_id: 1, publication_status: 1, business_version: 1, allowed_roles: 1, skills: 1, skills_enabled: 1, tools: 1, mcpServerNames: 1, release_metadata: 1})"
     $collections = Invoke-MongoJson 'db.getCollectionNames()'
 } catch {
     Add-Check 'mongodb-contract-query' $false $_.Exception.Message

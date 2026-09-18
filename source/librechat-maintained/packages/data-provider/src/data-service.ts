@@ -1,4 +1,5 @@
 import type { AxiosResponse } from 'axios';
+import type { SubmitTaskRef, SubmitSnapshot } from './submit';
 import type { TContextProjectionRequest, TContextUsageEvent } from './types/runs';
 import type { TFileConfig } from './file-config';
 import type * as t from './types';
@@ -15,6 +16,20 @@ import * as config from './config';
 import request from './request';
 import * as s from './schemas';
 import * as r from './roles';
+
+export function getSubmitTask(task: SubmitTaskRef): Promise<SubmitSnapshot> {
+  return request.get(endpoints.submitTask(task));
+}
+
+export function getSubmitArtifact(
+  task: SubmitTaskRef,
+  artifactId: string,
+): Promise<AxiosResponse<Blob>> {
+  return request.getResponse(endpoints.submitArtifact(task, artifactId), {
+    responseType: 'blob',
+    headers: { Accept: 'application/octet-stream' },
+  });
+}
 
 export function revokeUserKey(name: string): Promise<unknown> {
   return request.delete(endpoints.revokeUserKey(name));

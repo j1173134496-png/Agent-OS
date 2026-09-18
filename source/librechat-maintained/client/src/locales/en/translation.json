@@ -1925,5 +1925,13 @@
   "com_ui_zoom_in": "Zoom in",
   "com_ui_zoom_level": "Zoom level",
   "com_ui_zoom_out": "Zoom out",
-  "com_user_message": "You"
+  "com_user_message": "You",
+  "com_ui_submit_task": "Filing task",
+  "com_ui_submit_collecting": "Waiting for source documents",
+  "com_ui_submit_ready": "Ready to process",
+  "com_ui_submit_running": "Processing reports",
+  "com_ui_submit_review": "Awaiting human review",
+  "com_ui_submit_completed": "Reports completed",
+  "com_ui_submit_unavailable": "Task unavailable or access denied",
+  "com_ui_submit_unknown": "Task status pending"
 }

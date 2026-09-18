@@ -51,7 +51,9 @@ Add-Check 'AOS-032-01-release-manifest' (
     $manifest.schema_version -eq 'agentos.agent-release.v1' -and
     $manifest.publication_status -eq 'published' -and
     -not [string]::IsNullOrWhiteSpace([string]$manifest.business_version) -and
-    $null -ne $manifest.release_record
+    $null -ne $manifest.release_record -and
+    [string]$manifest.agent_id -match '^agent_' -and
+    -not [string]::IsNullOrWhiteSpace([string]$manifest.business_agent_id)
 ) 'Versioned Agent release manifest has publication status, business version, and release record.'
 
 Add-Check 'AOS-032-01-native-registry' (

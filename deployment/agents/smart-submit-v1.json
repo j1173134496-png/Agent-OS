@@ -1,6 +1,7 @@
 {
   "schema_version": "agentos.agent-release.v1",
-  "agent_id": "smart-submit-v1",
+  "agent_id": "agent_smart_submit_v1",
+  "business_agent_id": "smart-submit-v1",
   "business_version": "1.0.0",
   "display_name": "智能填报助手",
   "category": "业务运营",
@@ -16,6 +17,7 @@
   "runtime": {
     "provider": "立能派中转",
     "model": "gpt-5.5",
+    "allowed_models": ["gpt-5.5"],
     "reasoning": "medium",
     "skills_enabled": true,
     "mcp_server_ids": ["submit-flow"],

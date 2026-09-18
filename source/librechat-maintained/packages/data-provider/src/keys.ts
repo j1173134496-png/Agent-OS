@@ -1,4 +1,5 @@
 export enum QueryKeys {
+  submitTask = 'submitTask',
   messages = 'messages',
   sharedMessages = 'sharedMessages',
   sharedStartupConfig = 'sharedStartupConfig',
@@ -94,6 +95,7 @@ export const DynamicQueryKeys = {
 } as const;
 
 export enum MutationKeys {
+  submitDownload = 'submitDownload',
   createAgentApiKey = 'createAgentApiKey',
   deleteAgentApiKey = 'deleteAgentApiKey',
   fileUpload = 'fileUpload',

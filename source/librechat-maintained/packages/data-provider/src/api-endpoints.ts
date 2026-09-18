@@ -2,6 +2,13 @@ import type { StartupConfigContext } from './config';
 import type { AssistantsEndpoint } from './schemas';
 import { ResourceType } from './accessPermissions';
 import * as q from './types/queries';
+import type { SubmitTaskRef } from './submit';
+
+export const submitTask = ({ agentId, conversationId, taskId }: SubmitTaskRef): string =>
+  `${apiBaseUrl()}/api/agents/${encodeURIComponent(agentId)}/submit/${encodeURIComponent(conversationId)}/${encodeURIComponent(taskId)}`;
+
+export const submitArtifact = (task: SubmitTaskRef, artifactId: string): string =>
+  `${submitTask(task)}/artifacts/${encodeURIComponent(artifactId)}`;
 
 let BASE_URL = '';
 if (

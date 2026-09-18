@@ -525,7 +525,7 @@ describe('buildEndpointOption - defaultParamsEndpoint parsing', () => {
     const req = createReq(
       {
         endpoint: EModelEndpoint.agents,
-        agent_id: 'smart-submit-v1',
+        agent_id: 'agent_smart_submit_v1',
       },
       {
         modelSpecs: {
@@ -553,7 +553,7 @@ describe('buildEndpointOption - defaultParamsEndpoint parsing', () => {
     expect(mockAgentBuildOptions).toHaveBeenCalledWith(
       req,
       EModelEndpoint.agents,
-      expect.objectContaining({ agent_id: 'smart-submit-v1' }),
+        expect.objectContaining({ agent_id: 'agent_smart_submit_v1' }),
       undefined,
     );
     expect(next).toHaveBeenCalledTimes(1);

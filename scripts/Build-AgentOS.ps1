@@ -21,8 +21,9 @@ if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace($digest) -or $digest -n
 }
 
 $composeText = [IO.File]::ReadAllText($composePath)
-$imagePattern = '(?m)(^\s*image:\s*)' + [regex]::Escape($ImageRepository) + '(@sha256:[a-f0-9]{64}|:[^\s]+)'
-$updated = [regex]::Replace($composeText, $imagePattern, ('$1' + $digest.Replace('$', '$$')), 1)
+$imagePattern = '(?m)(^\s*image:\s*(?:\$\{AGENTOS_API_IMAGE:-)?' + [regex]::Escape($ImageRepository) + ')(@sha256:[a-f0-9]{64}|:[^\s}]+)'
+$digestRef = $digest.Substring($digest.IndexOf('@'))
+$updated = [regex]::Replace($composeText, $imagePattern, [System.Text.RegularExpressions.MatchEvaluator]{ param($m) $m.Groups[1].Value + $digestRef }, 1)
 if ($updated -eq $composeText) { throw "Could not update the API image reference in $composePath." }
 [IO.File]::WriteAllText($composePath, $updated, [Text.UTF8Encoding]::new($false))
 

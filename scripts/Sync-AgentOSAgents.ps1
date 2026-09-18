@@ -66,6 +66,11 @@ if ((Get-RequiredText $release 'schema_version' 'schema_version') -ne 'agentos.a
 }
 
 $agentId = Get-RequiredText $release 'agent_id' 'agent_id'
+$businessAgentId = if ($release.PSObject.Properties.Name -contains 'business_agent_id') {
+    Get-RequiredText $release 'business_agent_id' 'business_agent_id'
+} else {
+    $agentId
+}
 $displayName = Get-RequiredText $release 'display_name' 'display_name'
 $businessVersion = Get-RequiredText $release 'business_version' 'business_version'
 $publicationStatus = Get-RequiredText $release 'publication_status' 'publication_status'
@@ -77,6 +82,13 @@ $runtime = $release.runtime
 $provider = Get-RequiredText $runtime 'provider' 'runtime.provider'
 $model = Get-RequiredText $runtime 'model' 'runtime.model'
 $reasoning = Get-RequiredText $runtime 'reasoning' 'runtime.reasoning'
+$allowedModels = @($runtime.allowed_models | ForEach-Object { [string]$_ } | Where-Object { $_ })
+if ($allowedModels.Count -eq 0) {
+    throw 'runtime.allowed_models must contain at least one verified model.'
+}
+if ($model -notin $allowedModels) {
+    throw 'runtime.model must be included in runtime.allowed_models.'
+}
 
 if ($publicationStatus -notin @('draft', 'pending_publish_validation', 'published', 'retired')) {
     throw "Unsupported publication_status: $publicationStatus"
@@ -101,6 +113,12 @@ foreach ($mcpId in $configuredMcpIds) {
 
 if ($agentId -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]*$') {
     throw "Invalid Agent ID: $agentId"
+}
+if ($agentId -notmatch '^agent_') {
+    throw "Persistent LibreChat Agent ID must start with agent_: $agentId"
+}
+if ($businessAgentId -notmatch '^[A-Za-z0-9][A-Za-z0-9._-]*$') {
+    throw "Invalid business Agent ID: $businessAgentId"
 }
 
 $toolIds = @($runtime.tool_ids)
@@ -176,13 +194,16 @@ $verificationTask = Get-RequiredText $releaseRecord 'verification_task' 'release
 
 $agentSpec = [ordered]@{
     id = $agentId
+    business_agent_id = $businessAgentId
     name = $displayName
     description = $description
     instructions = $instructions
     provider = $provider
     model = $model
+    allowed_models = @($allowedModels)
     model_parameters = [ordered]@{
         model = $model
+        allowed_models = @($allowedModels)
         reasoning_effort = $reasoning
     }
     tools = @($nativeTools)
@@ -256,7 +277,7 @@ const owner = db.users.find({ role: 'ADMIN' }).sort({ username: 1, _id: 1 }).lim
 if (!owner) throw new Error('No ADMIN user exists; cannot assign the managed Agent owner.');
 const viewerRole = db.accessroles.findOne({ accessRoleId: 'agent_viewer', resourceType: 'agent' });
 if (!viewerRole) throw new Error('The native agent_viewer role is missing.');
-const existing = db.agents.findOne({ id: spec.id });
+const existing = db.agents.findOne({ id: spec.id }) || db.agents.findOne({ id: spec.business_agent_id });
 const previousId = existing ? existing._id : null;
 spec.author = owner._id;
 spec.versions.forEach((version) => version.author = owner._id);
@@ -270,6 +291,9 @@ if (existing) {
   db.agents.insertOne(spec);
 }
 const agent = db.agents.findOne({ id: spec.id });
+if (!agent) throw new Error('Managed Agent was not persisted with its native platform ID.');
+db.conversations.updateMany({ agent_id: spec.business_agent_id }, { `$set: { agent_id: spec.id } });
+db.agents.deleteMany({ id: spec.business_agent_id, _id: { `$ne: agent._id } });
 if (spec.publication_status === 'published') {
   db.aclentries.updateOne(
     { principalType: 'public', resourceType: 'agent', resourceId: agent._id },

@@ -5,7 +5,7 @@ services:
     # V0.3.2 architecture release image is immutable. Rebuild with scripts/Build-AgentOS.ps1
     # and update this digest only as part of a new release record.
     # V0.3.0 rollback image: registry.librechat.ai/danny-avila/librechat@sha256:a950bb5fe847ae3b00797bf02d0b26bcd4c12f27240ebad6fa9eedafefc59d52
-    image: ${AGENTOS_API_IMAGE:-agentos/librechat@sha256:4bb71758b0ae058b4a542d822d7bceb31f0a51fcc4c7ff36cd6e72f4bb98bf74}
+    image: ${AGENTOS_API_IMAGE:-agentos/librechat@sha256:850289ad7a3c7377a491b8c009ee6f63191773fe02383e9c5996e4eb609af889}
     pull_policy: ${AGENTOS_API_PULL_POLICY:-never}
     platform: ${AGENTOS_API_PLATFORM:-linux/amd64}
     container_name: agentos-api

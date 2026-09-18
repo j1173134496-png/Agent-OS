@@ -21,6 +21,7 @@ const {
 const { logger, runAsSystem } = require('@librechat/data-schemas');
 const {
   sanitizeFilename,
+  preserveSubmitPDF,
   parseText,
   processAudioFile,
   getStorageMetadata,
@@ -668,6 +669,13 @@ const processAgentFileUpload = async ({ req, res, metadata }) => {
   const { agent_id, tool_resource, file_id, temp_file_id = null } = metadata;
 
   let messageAttachment = !!metadata.message_file;
+  const submitPDF = await preserveSubmitPDF({
+    agentId: agent_id,
+    messageAttachment,
+    resource: tool_resource,
+    file,
+    fileId: file_id,
+  });
 
   if (agent_id && !tool_resource && !messageAttachment) {
     throw new Error('No tool resource provided for agent file upload');
@@ -736,7 +744,7 @@ const processAgentFileUpload = async ({ req, res, metadata }) => {
       throw new Error('File search is not enabled for Agents');
     }
     // Note: File search processing continues to dual storage logic below
-  } else if (tool_resource === EToolResources.context) {
+  } else if (tool_resource === EToolResources.context && !submitPDF) {
     const { file_id, temp_file_id = null } = metadata;
 
     /**
@@ -868,7 +876,9 @@ const processAgentFileUpload = async ({ req, res, metadata }) => {
   // Dual storage pattern for RAG files: Storage + Vector DB
   let storageResult, embeddingResult;
   const isImageFile = file.mimetype.startsWith('image');
-  const source = getFileStrategy(appConfig, { isImage: isImageFile });
+  const source = submitPDF
+    ? FileSources.local
+    : getFileStrategy(appConfig, { isImage: isImageFile });
 
   if (tool_resource === EToolResources.file_search) {
     // FIRST: Upload to Storage for permanent backup (S3/local/etc.)

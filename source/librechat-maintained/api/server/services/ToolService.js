@@ -547,6 +547,15 @@ async function loadToolDefinitionsWrapper({ req, res, agent, streamId = null, to
   }
 
   const appConfig = req.config;
+  // Submit Agent releases use an explicit contract list. Some MCP cache
+  // versions store provider tool names differently, so add a server-scoped
+  // mcp_all fallback to keep the published Agent usable across upgrades.
+  if (agent.id === (process.env.SUBMIT_PLATFORM_AGENT_ID || 'agent_smart_submit_v1')) {
+    const submitFallback = `${Constants.mcp_all}${Constants.mcp_delimiter}submit-flow`;
+    if (!agent.tools.includes(submitFallback)) {
+      agent = { ...agent, tools: [...agent.tools, submitFallback] };
+    }
+  }
   const enabledCapabilities = await resolveAgentCapabilities(req, appConfig, agent.id);
 
   const checkCapability = (capability) => enabledCapabilities.has(capability);

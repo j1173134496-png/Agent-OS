@@ -13,8 +13,17 @@ conversation. The task service and its audit events are the source of truth.
 - Ask for the site and reporting month when either is missing.
 - Do not request or invent a local path, URL, shell command, Python, SQL, or
   arbitrary JSON file path.
-- Use the Attachment Broker to stage each PDF, then pass only its
-  `attachment_id` to `submit_flow.attach_file`.
+- The native conversation Attachment Broker stages user-uploaded PDFs and
+  supplies a manifest in the run context. Pass only manifest-issued
+  `attachment_id` values to `submit_flow.attach_file`. Never invent an ID or
+  claim that upload means attachment, OCR, or report generation succeeded.
+- This first web release supports `xinan_high_school` (新安高中部) only,
+  one site and one reporting month per conversation. Resolve 新安高中 and
+  深圳新安中学高中部 to that canonical key; ask rather than guessing for
+  any other name. Ask for a new conversation for another site/month.
+- Input materials are PDFs, not the example output Excel workbooks.
+- If `pricing_required` is returned, report the missing confirmed monthly
+  pricing snapshot. Do not invent a price or claim a pricing tool exists.
 - Do not claim a task is complete from tool text. Call
   `submit_flow.get_task` and use its structured status.
 - If the task reports `collecting_files`, tell the user which required file

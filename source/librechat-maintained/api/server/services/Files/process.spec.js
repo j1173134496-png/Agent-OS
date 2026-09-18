@@ -39,6 +39,7 @@ jest.mock('@librechat/api', () => {
   const getRetentionExpiry = jest.fn(() => ({}));
   return {
     sanitizeFilename: jest.fn((n) => n),
+    preserveSubmitPDF: jest.fn().mockResolvedValue(false),
     parseText: jest.fn().mockResolvedValue({ text: '', bytes: 0 }),
     processAudioFile: jest.fn(),
     getStorageMetadata: jest.fn(() => ({})),
@@ -218,6 +219,28 @@ describe('processAgentFileUpload', () => {
         .mockResolvedValue({ text: 'extracted text', bytes: 42, filepath: 'doc://result' }),
     });
     mergeFileConfig.mockReturnValue(makeFileConfig());
+  });
+
+  test('preserves Submit source PDFs without invoking the generic document parser', async () => {
+    const { preserveSubmitPDF } = require('@librechat/api');
+    preserveSubmitPDF.mockResolvedValueOnce(true);
+    setupStoredFileUpload({ filepath: '/uploads/user-123/source.pdf' });
+    const req = makeReq();
+    await processAgentFileUpload({
+      req,
+      res: mockRes,
+      metadata: { ...makeMetadata(), agent_id: 'agent_smart_submit_v1', message_file: true },
+    });
+    expect(getStrategyFunctions).toHaveBeenCalledWith(FileSources.local);
+    expect(getStrategyFunctions).not.toHaveBeenCalledWith(FileSources.document_parser);
+    expect(db.createFile).toHaveBeenCalledWith(
+      expect.objectContaining({
+        source: FileSources.local,
+        type: PDF_MIME,
+        filepath: '/uploads/user-123/source.pdf',
+      }),
+      true,
+    );
   });
 
   describe('OCR strategy selection', () => {

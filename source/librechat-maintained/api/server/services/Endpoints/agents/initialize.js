@@ -3,6 +3,7 @@ const { createContentAggregator } = require('@librechat/agents');
 const {
   loadSkillStates,
   initializeAgent,
+  primeNativeSubmit,
   primeInvokedSkills,
   validateAgentModel,
   extractManualSkills,
@@ -31,6 +32,8 @@ const {
 } = require('~/server/controllers/agents/callbacks');
 const { loadAgentTools, loadToolsForExecution } = require('~/server/services/ToolService');
 const { filterFilesByAgentAccess } = require('~/server/services/Files/permissions');
+const { getStrategyFunctions } = require('~/server/services/Files/strategies');
+const { createMCPPermissionContext, resolveConfigServers } = require('~/server/services/MCP');
 const {
   getSkillToolDeps,
   getSkillDbMethods,
@@ -410,6 +413,24 @@ const initializeClient = async ({ req, res, signal, endpointOption }) => {
       getSkillByName: skillDbMethods.getSkillByName,
     },
   );
+
+  if (primaryConfig.id === (process.env.SUBMIT_PLATFORM_AGENT_ID || 'agent_smart_submit_v1')) {
+    const servers = await resolveConfigServers(req);
+    const attachmentContext = await primeNativeSubmit({
+      req,
+      agentId: primaryConfig.id,
+      fileIds: requestFiles.map((file) => file.file_id),
+      options: servers['submit-flow'],
+      canUseMCP: await createMCPPermissionContext(req).canUseServers(),
+      deps: { getFiles: db.getFiles, getMessages: db.getMessages, getStrategyFunctions },
+    });
+    primaryConfig.additional_instructions = [
+      primaryConfig.additional_instructions,
+      attachmentContext,
+    ]
+      .filter(Boolean)
+      .join('\n\n');
+  }
 
   /** Price emitted usage with the primary agent's resolved endpoint config so
    *  custom-endpoint agents reflect configured rates (mirrors the AgentClient

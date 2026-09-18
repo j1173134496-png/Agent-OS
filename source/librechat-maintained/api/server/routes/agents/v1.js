@@ -1,9 +1,10 @@
 const express = require('express');
-const { generateCheckAccess } = require('@librechat/api');
+const { generateCheckAccess, handleSubmitProxy } = require('@librechat/api');
 const { PermissionTypes, Permissions, PermissionBits } = require('librechat-data-provider');
 const { requireJwtAuth, configMiddleware, canAccessAgentResource } = require('~/server/middleware');
 const v1 = require('~/server/controllers/agents/v1');
-const { getRoleByName } = require('~/models');
+const { getRoleByName, getConvo } = require('~/models');
+const { resolveConfigServers, createMCPPermissionContext } = require('~/server/services/MCP');
 const actions = require('./actions');
 const tools = require('./tools');
 
@@ -27,6 +28,21 @@ const checkMarketplaceAccess = generateCheckAccess({
 });
 
 router.use(requireJwtAuth);
+
+router.get(
+  [
+    '/:id/submit/:conversationId/:taskId',
+    '/:id/submit/:conversationId/:taskId/artifacts/:artifactId',
+  ],
+  checkAgentAccess,
+  canAccessAgentResource({ requiredPermission: PermissionBits.VIEW, resourceIdParam: 'id' }),
+  (req, res) =>
+    handleSubmitProxy(req, res, {
+      getConvo,
+      resolveConfigServers,
+      canUseMCP: (request) => createMCPPermissionContext(request).canUseServers(),
+    }),
+);
 
 /**
  * Agent actions route.

@@ -17,6 +17,7 @@ import ToolCallInfo from './ToolCallInfo';
 import ProgressText from './ProgressText';
 import { logger } from '~/utils';
 import store from '~/store';
+import SubmitTask from './Parts/SubmitTask';
 
 export default function ToolCall({
   initialProgress = 0.1,
@@ -268,6 +269,7 @@ export default function ToolCall({
           </p>
         </div>
       )}
+      {name === 'create_task_mcp_submit-flow' && !hideAttachments && <SubmitTask output={output} />}
       {!hideAttachments && attachments && attachments.length > 0 && (
         <AttachmentGroup attachments={attachments} />
       )}
